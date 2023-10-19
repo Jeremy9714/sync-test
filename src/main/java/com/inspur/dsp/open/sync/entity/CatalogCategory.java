@@ -44,7 +44,7 @@ public class CatalogCategory implements Serializable {
      * 新增:I 修改:U 删除:D
      */
     @TableField("operate_type")
-    private Integer operateType;
+    private String operateType;
 
     /**
      * 同步时间戳
@@ -90,11 +90,11 @@ public class CatalogCategory implements Serializable {
         this.orderNum = orderNum;
     }
 
-    public Integer getOperateType() {
+    public String getOperateType() {
         return operateType;
     }
 
-    public void setOperateType(Integer operateType) {
+    public void setOperateType(String operateType) {
         this.operateType = operateType;
     }
 

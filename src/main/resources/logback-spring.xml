@@ -88,21 +88,33 @@
 		<appender-ref ref="CONSOLE"/>
 	</appender>
 
+	<!--控制台输出 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<!-- 设置日志输出格式 -->
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+			<!-- 设置输出字符集编码 -->
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
 
 	<logger name="com.inspur" level="${LOG_LEVEL}"
 			additivity="false">
 		<appender-ref ref="ASYNC-APP" />
+		<appender-ref ref="STDOUT" />
 	</logger>
 	<logger name="org.springframework" level="info">
 		<appender-ref ref="ASYNC-SPRING" />
+		<appender-ref ref="STDOUT" />
 	</logger>
 <!--	<logger name="com.alibaba.dubbo" level="${LOG_LEVEL}" additivity="false">-->
 <!--		<appender-ref ref="ASYNC-DUBBO" />-->
 <!--	</logger>-->
 
-	<root level="info">
+	<root level="debug">
 		<appender-ref ref="ASYNC-CONSOLE" />
 		<appender-ref ref="ASYNC-ROOT" />
+		<appender-ref ref="STDOUT" />
 	</root>
 
 </configuration>

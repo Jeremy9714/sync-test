@@ -1,5 +1,6 @@
 package com.inspur.dsp.open.sync.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.open.sync.constant.ServiceConstant;
@@ -59,7 +60,7 @@ public class CatalogCategoryServiceImpl extends ServiceImpl<CatalogCategoryDao, 
             }
 
             List<CatalogCategory> resultList = this.selectList(wrapper);
-            log.debug("查询结果: {}", resultList.toString());
+            log.debug("查询结果: {}", JSONObject.toJSONString(resultList));
             redisTemplate.opsForValue().set(ServiceConstant.SYNC_CATALOG_CATEGORY_KEY, latestOperationDate);
 
 
