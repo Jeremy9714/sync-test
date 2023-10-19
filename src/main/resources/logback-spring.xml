@@ -48,19 +48,19 @@
 		</encoder>
 	</appender>
 
-	<appender name="DUBBO"
-		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${LOG_DIR}/dubbo.log</file>
-		<rollingPolicy
-			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<FileNamePattern>${LOG_DIR}/archive/dubbo.%d{yyyy-MM-dd}.log
-			</FileNamePattern>
-			<maxHistory>10</maxHistory>
-		</rollingPolicy>
-		<encoder>
-			<Pattern>${FILE_LOG_PATTERN}</Pattern>
-		</encoder>
-	</appender>
+<!--	<appender name="DUBBO"-->
+<!--		class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--		<file>${LOG_DIR}/dubbo.log</file>-->
+<!--		<rollingPolicy-->
+<!--			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--			<FileNamePattern>${LOG_DIR}/archive/dubbo.%d{yyyy-MM-dd}.log-->
+<!--			</FileNamePattern>-->
+<!--			<maxHistory>10</maxHistory>-->
+<!--		</rollingPolicy>-->
+<!--		<encoder>-->
+<!--			<Pattern>${FILE_LOG_PATTERN}</Pattern>-->
+<!--		</encoder>-->
+<!--	</appender>-->
 
 	<appender name="ASYNC-ROOT" class="ch.qos.logback.classic.AsyncAppender">
 		<discardingThreshold>0</discardingThreshold>
@@ -77,11 +77,11 @@
 		<queueSize>256</queueSize>
 		<appender-ref ref="SPRING"/>
 	</appender>
-	<appender name="ASYNC-DUBBO" class="ch.qos.logback.classic.AsyncAppender">
-		<discardingThreshold>0</discardingThreshold>
-		<queueSize>256</queueSize>
-		<appender-ref ref="DUBBO"/>
-	</appender>
+<!--	<appender name="ASYNC-DUBBO" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--		<discardingThreshold>0</discardingThreshold>-->
+<!--		<queueSize>256</queueSize>-->
+<!--		<appender-ref ref="DUBBO"/>-->
+<!--	</appender>-->
 	<appender name="ASYNC-CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
 		<discardingThreshold>0</discardingThreshold>
 		<queueSize>10</queueSize>
@@ -96,9 +96,9 @@
 	<logger name="org.springframework" level="info">
 		<appender-ref ref="ASYNC-SPRING" />
 	</logger>
-	<logger name="com.alibaba.dubbo" level="${LOG_LEVEL}" additivity="false">
-		<appender-ref ref="ASYNC-DUBBO" />
-	</logger>
+<!--	<logger name="com.alibaba.dubbo" level="${LOG_LEVEL}" additivity="false">-->
+<!--		<appender-ref ref="ASYNC-DUBBO" />-->
+<!--	</logger>-->
 
 	<root level="info">
 		<appender-ref ref="ASYNC-CONSOLE" />
