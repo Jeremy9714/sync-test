@@ -153,11 +153,11 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>io.searchbox</groupId>
-            <artifactId>jest</artifactId>
-            <version>6.3.1</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.searchbox</groupId>-->
+<!--            <artifactId>jest</artifactId>-->
+<!--            <version>6.3.1</version>-->
+<!--        </dependency>-->
 
 <!--        <dependency>-->
 <!--            <groupId>org.elasticsearch</groupId>-->
