@@ -16,33 +16,63 @@ public class CatalogFieldInfo implements Serializable {
 
     private static final long serialVersionUID = -10L;
 
+    /**
+     * 区共享平台信息项主键
+     */
     @TableField("column_id")
     private String columnId;
 
+    /**
+     * 信息项名称
+     */
     @TableField("column_name")
     private String columnName;
 
+    /**
+     * 区共享平台目录主键
+     */
     @TableField("column_id")
     private String cataId;
 
+    /**
+     * 数据字典：数据类型
+     */
     @TableField("column_type")
     private String columnType;
 
+    /**
+     * 信息项长度
+     */
     @TableField("column_length")
     private String columnLength;
 
+    /**
+     * 信息项精度
+     */
     @TableField("column_prec")
     private String columnPrec;
 
+    /**
+     * 同步时间戳
+     */
     @TableField("operate_date")
     private Date operateDate;
 
+    /**
+     * 新增:I 修改:U 删除:D
+     */
     @TableField("operate_type")
     private String operateType;
 
+    /**
+     * 奥序号
+     */
     @TableField("order_num")
     private Integer orderNum;
 
+    /**
+     * 备注
+     */
     @TableField("remark")
     private String remark;
 

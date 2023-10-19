@@ -31,13 +31,13 @@ public class CatalogBasicinfoServiceImpl extends ServiceImpl<CatalogBasicInfoDao
     private CatalogBasicInfoDao catalogBasicInfoDao;
 
     @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public boolean syncCatalogBasicInfo() {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_CATALOG_BASICINFO_KEY);
+            String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_CATALOG_BASIC_INFO_KEY);
             String latestOperationDate = catalogBasicInfoDao.getLatestOperationDate();
             // 无数据
             if (StringUtils.isBlank(latestOperationDate)) {
@@ -58,7 +58,7 @@ public class CatalogBasicinfoServiceImpl extends ServiceImpl<CatalogBasicInfoDao
 
             List<CatalogBasicInfo> resultList = this.selectList(wrapper);
             log.debug("查询结果: {}", resultList.toString());
-            redisTemplate.opsForValue().set(ServiceConstant.SYNC_CATALOG_BASICINFO_KEY, latestOperationDate);
+            redisTemplate.opsForValue().set(ServiceConstant.SYNC_CATALOG_BASIC_INFO_KEY, latestOperationDate);
 
 
             return true;

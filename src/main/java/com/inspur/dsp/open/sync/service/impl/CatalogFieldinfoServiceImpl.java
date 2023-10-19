@@ -37,7 +37,7 @@ public class CatalogFieldinfoServiceImpl extends ServiceImpl<CatalogFieldInfoDao
     public boolean syncCatalogFieldInfo() {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_CATALOG_FIELDINFO_KEY);
+            String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_CATALOG_FIELD_INFO_KEY);
             String latestOperationDate = catalogFieldinfoDao.getLatestOperationDate();
             // 无数据
             if (StringUtils.isBlank(latestOperationDate)) {
@@ -58,7 +58,7 @@ public class CatalogFieldinfoServiceImpl extends ServiceImpl<CatalogFieldInfoDao
 
             List<CatalogFieldInfo> resultList = this.selectList(wrapper);
             log.debug("查询结果: {}", resultList.toString());
-            redisTemplate.opsForValue().set(ServiceConstant.SYNC_CATALOG_FIELDINFO_KEY, latestOperationDate);
+            redisTemplate.opsForValue().set(ServiceConstant.SYNC_CATALOG_FIELD_INFO_KEY, latestOperationDate);
 
 
             return true;
