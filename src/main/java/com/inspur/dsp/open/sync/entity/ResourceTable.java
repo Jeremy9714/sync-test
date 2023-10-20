@@ -7,9 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @Description:
- * @Author: zhangchy05 on 2023/10/19 9:42
- * @Version: 1.0
+ * 库表资源下行表
  */
 @TableName("resource_table")
 public class ResourceTable implements Serializable {
@@ -114,6 +112,12 @@ public class ResourceTable implements Serializable {
      */
     @TableField("remark")
     private String remark;
+
+    /**
+     * 实际库表资源对应表名
+     */
+    @TableField("targetTableName")
+    private String targetTableName;
 
 
 
@@ -243,5 +247,13 @@ public class ResourceTable implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getTargetTableName() {
+        return targetTableName;
+    }
+
+    public void setTargetTableName(String targetTableName) {
+        this.targetTableName = targetTableName;
     }
 }
