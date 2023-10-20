@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,6 +35,7 @@ public class CatalogFieldinfoServiceImpl extends ServiceImpl<CatalogFieldInfoDao
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    @Transactional
     @Override
     public boolean syncCatalogFieldInfo() {
         try {
