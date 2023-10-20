@@ -34,7 +34,7 @@ public class SyncDataTask {
     @Autowired
     private CatalogFieldinfoService catalogFieldinfoService;
 
-    @Scheduled(cron = "0/30 * * * * ?")
+    @Scheduled(cron = "* 0/1 * * * ?")
     public void syncTask() {
         Date startDate = new Date();
         log.info("--------同步任务开始, 开始时间为 {}", startDate);
