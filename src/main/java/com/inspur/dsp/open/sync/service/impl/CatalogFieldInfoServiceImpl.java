@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.open.sync.constant.ServiceConstant;
 import com.inspur.dsp.open.sync.dao.CatalogFieldInfoDao;
 import com.inspur.dsp.open.sync.entity.CatalogFieldInfo;
-import com.inspur.dsp.open.sync.service.CatalogFieldinfoService;
+import com.inspur.dsp.open.sync.service.CatalogFieldInfoService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +25,9 @@ import java.util.List;
  * @Version: 1.0
  */
 @Service
-public class CatalogFieldinfoServiceImpl extends ServiceImpl<CatalogFieldInfoDao, CatalogFieldInfo> implements CatalogFieldinfoService {
+public class CatalogFieldInfoServiceImpl extends ServiceImpl<CatalogFieldInfoDao, CatalogFieldInfo> implements CatalogFieldInfoService {
 
-    private static final Logger log = LoggerFactory.getLogger(CatalogFieldinfoServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(CatalogFieldInfoServiceImpl.class);
 
     @Autowired
     private CatalogFieldInfoDao catalogFieldinfoDao;

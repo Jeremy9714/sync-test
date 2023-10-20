@@ -8,7 +8,7 @@ import com.inspur.dsp.open.sync.entity.CatalogFieldInfo;
  * @Author: zhangchy05 on 2023/10/19 14:52
  * @Version: 1.0
  */
-public interface CatalogFieldinfoService extends IService<CatalogFieldInfo> {
+public interface CatalogFieldInfoService extends IService<CatalogFieldInfo> {
 
     boolean syncCatalogFieldInfo();
 }
