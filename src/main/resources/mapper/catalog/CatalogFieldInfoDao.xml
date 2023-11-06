@@ -2,12 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.inspur.dsp.open.sync.dao.CatalogFieldInfoDao">
 
-    <select id="getCatalogFieldInfoByCataIds" resultType="com.inspur.dsp.open.sync.entity.CatalogFieldInfo">
+    <resultMap id="catalogFieldInfoMap" type="com.inspur.dsp.open.sync.entity.CatalogFieldInfo">
+        <result column="column_id" property="columnId" />
+        <result column="column_name" property="columnName" />
+        <result column="cata_id" property="cataId" />
+        <result column="column_type" property="columnType" />
+        <result column="column_length" property="columnLength" />
+        <result column="column_prec" property="columnPrec" />
+        <result column="order_num" property="orderNum" />
+        <result column="remark" property="remark" />
+        <result column="sensitive_level" property="sensitiveLevel" />
+        <result column="open_attribute" property="openAttribute" />
+        <result column="share_type" property="shareType" />
+        <result column="belong_app_sys" property="belongAppSys" />
+        <result column="not_share_reason" property="notShareReason" />
+        <result column="NormDetail" property="normDetail" />
+    </resultMap>
+
+    <select id="getCatalogFieldInfoByCataIds" resultMap="catalogFieldInfoMap">
         select * from catalog_fieldinfo
         <where>
-            <if test="cataIds!=null and cataIds.length > 0">
+            <if test="cataIds != null and cataIds.size > 0">
                 and cata_id in
-                <foreach collection="cata_ids" item="id" index="index" open="(" close=")">
+                <foreach collection="cataIds" item="id" index="index" open="(" close=")" separator=",">
                     #{id}
                 </foreach>
             </if>

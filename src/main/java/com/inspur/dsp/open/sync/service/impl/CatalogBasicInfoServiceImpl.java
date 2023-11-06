@@ -76,7 +76,7 @@ public class CatalogBasicInfoServiceImpl extends ServiceImpl<CatalogBasicInfoDao
                 List<String> cataIds = resultList.stream().map(CatalogBasicInfo::getCataId).collect(Collectors.toList());
                 List<CatalogFieldInfo> catalogFieldInfos = catalogFieldInfoService.getCatalogFieldInfoByCataIds(cataIds);
                 if (catalogFieldInfos != null && catalogFieldInfos.size() > 0) {
-                    catalogFieldInfoFlag = catalogFieldInfoService.insertOrUpdateBatch(catalogFieldInfos);
+                    // TODO
                 }
             }
 

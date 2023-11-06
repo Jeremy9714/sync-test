@@ -2,6 +2,7 @@ package com.inspur.dsp.open.sync.dao;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.inspur.dsp.open.sync.entity.CatalogFieldInfo;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,5 +15,5 @@ import java.util.List;
 @Repository
 public interface CatalogFieldInfoDao extends BaseMapper<CatalogFieldInfo> {
 
-    List<CatalogFieldInfo> getCatalogFieldInfoByCataIds(List<String> cataIds);
+    List<CatalogFieldInfo> getCatalogFieldInfoByCataIds(@Param("cataIds") List<String> cataIds);
 }

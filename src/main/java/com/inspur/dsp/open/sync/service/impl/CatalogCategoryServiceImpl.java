@@ -7,7 +7,6 @@ import com.inspur.dsp.open.sync.constant.ServiceConstant;
 import com.inspur.dsp.open.sync.dao.CatalogCategoryDao;
 import com.inspur.dsp.open.sync.entity.CatalogCategory;
 import com.inspur.dsp.open.sync.service.CatalogCategoryService;
-import com.inspur.dsp.open.sync.util.SyncDataServiceUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
