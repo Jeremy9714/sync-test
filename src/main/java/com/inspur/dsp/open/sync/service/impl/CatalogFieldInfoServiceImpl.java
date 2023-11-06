@@ -32,43 +32,8 @@ public class CatalogFieldInfoServiceImpl extends ServiceImpl<CatalogFieldInfoDao
     @Autowired
     private CatalogFieldInfoDao catalogFieldinfoDao;
 
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
-
-    @Transactional
     @Override
-    public boolean syncCatalogFieldInfo() {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_CATALOG_FIELD_INFO_KEY);
-            String latestOperationDate = catalogFieldinfoDao.getLatestOperationDate();
-            // 无数据
-            if (StringUtils.isBlank(latestOperationDate)) {
-                log.info("下行库无信息项数据，不需要同步");
-                return true;
-            }
-
-            EntityWrapper<CatalogFieldInfo> wrapper = new EntityWrapper<>();
-            if (StringUtils.isNotBlank(lastSyncDate)) {
-                Date lastSyncTime = sdf.parse(lastSyncDate);
-                Date latestOperationTime = sdf.parse(latestOperationDate);
-                if (lastSyncTime.compareTo(latestOperationTime) >= 0) {
-                    log.info("下行库无新增信息据项数据，不需要同步");
-                    return true;
-                }
-                wrapper.gt("operate_date", lastSyncDate);
-            }
-
-            List<CatalogFieldInfo> resultList = this.selectList(wrapper);
-            log.debug("查询结果: {}", JSONObject.toJSONString(resultList));
-            redisTemplate.opsForValue().set(ServiceConstant.SYNC_CATALOG_FIELD_INFO_KEY, latestOperationDate);
-
-
-            return true;
-        } catch (Exception e) {
-            log.error("同步信息项数据异常: {}", e);
-            e.printStackTrace();
-        }
-        return false;
+    public List<CatalogFieldInfo> getCatalogFieldInfoByCataIds(List<String> cataIds) {
+        return catalogFieldinfoDao.getCatalogFieldInfoByCataIds(cataIds);
     }
 }

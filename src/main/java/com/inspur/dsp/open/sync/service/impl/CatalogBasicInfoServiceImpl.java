@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.open.sync.constant.ServiceConstant;
 import com.inspur.dsp.open.sync.dao.CatalogBasicInfoDao;
 import com.inspur.dsp.open.sync.entity.CatalogBasicInfo;
+import com.inspur.dsp.open.sync.entity.CatalogFieldInfo;
 import com.inspur.dsp.open.sync.service.CatalogBasicInfoService;
+import com.inspur.dsp.open.sync.service.CatalogFieldInfoService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description:
@@ -33,11 +36,17 @@ public class CatalogBasicInfoServiceImpl extends ServiceImpl<CatalogBasicInfoDao
     private CatalogBasicInfoDao catalogBasicInfoDao;
 
     @Autowired
+    private CatalogFieldInfoService catalogFieldInfoService;
+
+    @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     @Override
     public boolean syncCatalogBasicInfo() {
+        boolean catalogFieldInfoFlag = true;
+        boolean catalogBasicInfoFlag = true;
+
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_CATALOG_BASIC_INFO_KEY);
@@ -61,10 +70,19 @@ public class CatalogBasicInfoServiceImpl extends ServiceImpl<CatalogBasicInfoDao
 
             List<CatalogBasicInfo> resultList = this.selectList(wrapper);
             log.debug("查询结果: {}", JSONObject.toJSONString(resultList));
+
+            // 同步目录信息项
+            if (resultList != null && resultList.size() > 0) {
+                List<String> cataIds = resultList.stream().map(CatalogBasicInfo::getCataId).collect(Collectors.toList());
+                List<CatalogFieldInfo> catalogFieldInfos = catalogFieldInfoService.getCatalogFieldInfoByCataIds(cataIds);
+                if (catalogFieldInfos != null && catalogFieldInfos.size() > 0) {
+                    catalogFieldInfoFlag = catalogFieldInfoService.insertOrUpdateBatch(catalogFieldInfos);
+                }
+            }
+
             redisTemplate.opsForValue().set(ServiceConstant.SYNC_CATALOG_BASIC_INFO_KEY, latestOperationDate);
 
-
-            return true;
+            return catalogFieldInfoFlag && catalogFieldInfoFlag;
         } catch (Exception e) {
             log.error("同步目录信息数据异常: {}", e);
             e.printStackTrace();

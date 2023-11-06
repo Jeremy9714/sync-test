@@ -2,7 +2,6 @@ package com.inspur.dsp.open.sync.schedule;
 
 import com.inspur.dsp.open.sync.service.CatalogBasicInfoService;
 import com.inspur.dsp.open.sync.service.CatalogCategoryService;
-import com.inspur.dsp.open.sync.service.CatalogFieldInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +30,6 @@ public class SyncDataTask {
     @Autowired
     private CatalogBasicInfoService catalogBasicinfoService;
 
-    @Autowired
-    private CatalogFieldInfoService catalogFieldinfoService;
-
     @Scheduled(cron = "0 0/5 * * * ?")
     public void syncTask() {
         Date startDate = new Date();
@@ -48,12 +44,6 @@ public class SyncDataTask {
         log.info("--------开始同步目录信息数据");
         catalogBasicinfoService.syncCatalogBasicInfo();
         log.info("--------结束同步目录信息数据");
-
-        //3.同步信息项数据
-        log.info("--------开始同步信息项数据");
-        catalogFieldinfoService.syncCatalogFieldInfo();
-        log.info("--------结束同步信息项数据");
-
 
         Date endDate = new Date();
         long time = endDate.getTime() - startDate.getTime();

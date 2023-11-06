@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.inspur.dsp.open.sync.dao.CatalogFieldInfoDao">
-    <select id="getLatestOperationDate" resultType="java.lang.String">
-        select max(operate_date) from catalog_fieldinfo
+
+    <select id="getCatalogFieldInfoByCataIds" resultType="com.inspur.dsp.open.sync.entity.CatalogFieldInfo">
+        select * from catalog_fieldinfo
+        <where>
+            <if test="cataIds!=null and cataIds.length > 0">
+                and cata_id in
+                <foreach collection="cata_ids" item="id" index="index" open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
     </select>
 
 </mapper>

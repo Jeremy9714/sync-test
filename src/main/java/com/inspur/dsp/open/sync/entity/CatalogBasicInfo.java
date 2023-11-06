@@ -151,10 +151,106 @@ public class CatalogBasicInfo implements Serializable {
     private String remark;
 
     /**
-     * 开放领域，数据字典：开放领域
+     * 不可发布理由
      */
-    @TableField("open_field")
-    private String openField;
+    @TableField("not_publish_explain")
+    private String notPublishExplain;
+
+    /**
+     * 是否为可发布目录
+     */
+    @TableField("is_publish")
+    private String isPublish;
+
+    /**
+     * 是否电子证照
+     */
+    @TableField("is_certificate")
+    private String isCertificate;
+
+    /**
+     * 实施清单编码
+     */
+    @TableField("task_code")
+    private String taskCode;
+
+    /**
+     * 数据所属事项名称
+     */
+    @TableField("task_name")
+    private String taskName;
+
+    /**
+     * 是否绑定事项
+     */
+    @TableField("is_binding_task")
+    private String isBindingTask;
+
+    /**
+     * 提供渠道
+     */
+    @TableField("provide_channel")
+    private String provideChannel;
+
+    /**
+     * 应用场景
+     */
+    @TableField("app_scene")
+    private String appScene;
+
+    /**
+     * 其他应用场景
+     */
+    @TableField("other_app_scene")
+    private String otherAppScene;
+
+    /**
+     * 国家所属领域
+     */
+    @TableField("nation_field")
+    private String nationField;
+
+    /**
+     * 办理结果
+     */
+    @TableField("approval_result")
+    private String approvalResult;
+
+    /**
+     * 政府数据目录编码
+     */
+    @TableField("gov_catalog_encode")
+    private String govCatalogEncode;
+
+    /**
+     * 不更新理由
+     */
+    @TableField("not_update_reason")
+    private String notUpdateReason;
+
+    /**
+     * 业务办理项编码
+     */
+    @TableField("yw_code")
+    private String ywCode;
+
+    /**
+     * 系统的参数数据
+     */
+    @TableField("event_data")
+    private String eventData;
+
+    /**
+     * 开放门户更新频率
+     */
+    @TableField("openFrequency")
+    private String openFrequency;
+
+    /**
+     * 开放门户其他更新频率
+     */
+    @TableField("openOtherFrequency")
+    private String openOtherFrequency;
 
     public String getCataId() {
         return cataId;
@@ -332,11 +428,139 @@ public class CatalogBasicInfo implements Serializable {
         this.remark = remark;
     }
 
-    public String getOpenField() {
-        return openField;
+    public String getNotPublishExplain() {
+        return notPublishExplain;
     }
 
-    public void setOpenField(String openField) {
-        this.openField = openField;
+    public void setNotPublishExplain(String notPublishExplain) {
+        this.notPublishExplain = notPublishExplain;
+    }
+
+    public String getIsPublish() {
+        return isPublish;
+    }
+
+    public void setIsPublish(String isPublish) {
+        this.isPublish = isPublish;
+    }
+
+    public String getIsCertificate() {
+        return isCertificate;
+    }
+
+    public void setIsCertificate(String isCertificate) {
+        this.isCertificate = isCertificate;
+    }
+
+    public String getTaskCode() {
+        return taskCode;
+    }
+
+    public void setTaskCode(String taskCode) {
+        this.taskCode = taskCode;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public String getIsBindingTask() {
+        return isBindingTask;
+    }
+
+    public void setIsBindingTask(String isBindingTask) {
+        this.isBindingTask = isBindingTask;
+    }
+
+    public String getProvideChannel() {
+        return provideChannel;
+    }
+
+    public void setProvideChannel(String provideChannel) {
+        this.provideChannel = provideChannel;
+    }
+
+    public String getAppScene() {
+        return appScene;
+    }
+
+    public void setAppScene(String appScene) {
+        this.appScene = appScene;
+    }
+
+    public String getOtherAppScene() {
+        return otherAppScene;
+    }
+
+    public void setOtherAppScene(String otherAppScene) {
+        this.otherAppScene = otherAppScene;
+    }
+
+    public String getNationField() {
+        return nationField;
+    }
+
+    public void setNationField(String nationField) {
+        this.nationField = nationField;
+    }
+
+    public String getApprovalResult() {
+        return approvalResult;
+    }
+
+    public void setApprovalResult(String approvalResult) {
+        this.approvalResult = approvalResult;
+    }
+
+    public String getGovCatalogEncode() {
+        return govCatalogEncode;
+    }
+
+    public void setGovCatalogEncode(String govCatalogEncode) {
+        this.govCatalogEncode = govCatalogEncode;
+    }
+
+    public String getNotUpdateReason() {
+        return notUpdateReason;
+    }
+
+    public void setNotUpdateReason(String notUpdateReason) {
+        this.notUpdateReason = notUpdateReason;
+    }
+
+    public String getYwCode() {
+        return ywCode;
+    }
+
+    public void setYwCode(String ywCode) {
+        this.ywCode = ywCode;
+    }
+
+    public String getEventData() {
+        return eventData;
+    }
+
+    public void setEventData(String eventData) {
+        this.eventData = eventData;
+    }
+
+    public String getOpenFrequency() {
+        return openFrequency;
+    }
+
+    public void setOpenFrequency(String openFrequency) {
+        this.openFrequency = openFrequency;
+    }
+
+    public String getOpenOtherFrequency() {
+        return openOtherFrequency;
+    }
+
+    public void setOpenOtherFrequency(String openOtherFrequency) {
+        this.openOtherFrequency = openOtherFrequency;
     }
 }

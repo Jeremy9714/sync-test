@@ -53,18 +53,6 @@ public class CatalogFieldInfo implements Serializable {
     private String columnPrec;
 
     /**
-     * 同步时间戳
-     */
-    @TableField("operate_date")
-    private Date operateDate;
-
-    /**
-     * 新增:I 修改:U 删除:D
-     */
-    @TableField("operate_type")
-    private String operateType;
-
-    /**
      * 奥序号
      */
     @TableField("order_num")
@@ -75,6 +63,42 @@ public class CatalogFieldInfo implements Serializable {
      */
     @TableField("remark")
     private String remark;
+
+    /**
+     * 数据敏感级别
+     */
+    @TableField("sensitive_level")
+    private String sensitiveLevel;
+
+    /**
+     * 开放属性
+     */
+    @TableField("open_attribute")
+    private String openAttribute;
+
+    /**
+     * 共享类型
+     */
+    @TableField("share_type")
+    private String shareType;
+
+    /**
+     * 来源系统标识
+     */
+    @TableField("belong_app_sys")
+    private String belongAppSys;
+
+    /**
+     * 不共享原因
+     */
+    @TableField("not_share_reason")
+    private String notShareReason;
+
+    /**
+     * 开放门户信息项详情
+     */
+    @TableField("NormDetail")
+    private String normDetail;
 
     public String getColumnId() {
         return columnId;
@@ -124,22 +148,6 @@ public class CatalogFieldInfo implements Serializable {
         this.columnPrec = columnPrec;
     }
 
-    public Date getOperateDate() {
-        return operateDate;
-    }
-
-    public void setOperateDate(Date operateDate) {
-        this.operateDate = operateDate;
-    }
-
-    public String getOperateType() {
-        return operateType;
-    }
-
-    public void setOperateType(String operateType) {
-        this.operateType = operateType;
-    }
-
     public Integer getOrderNum() {
         return orderNum;
     }
@@ -154,5 +162,53 @@ public class CatalogFieldInfo implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getSensitiveLevel() {
+        return sensitiveLevel;
+    }
+
+    public void setSensitiveLevel(String sensitiveLevel) {
+        this.sensitiveLevel = sensitiveLevel;
+    }
+
+    public String getOpenAttribute() {
+        return openAttribute;
+    }
+
+    public void setOpenAttribute(String openAttribute) {
+        this.openAttribute = openAttribute;
+    }
+
+    public String getShareType() {
+        return shareType;
+    }
+
+    public void setShareType(String shareType) {
+        this.shareType = shareType;
+    }
+
+    public String getBelongAppSys() {
+        return belongAppSys;
+    }
+
+    public void setBelongAppSys(String belongAppSys) {
+        this.belongAppSys = belongAppSys;
+    }
+
+    public String getNotShareReason() {
+        return notShareReason;
+    }
+
+    public void setNotShareReason(String notShareReason) {
+        this.notShareReason = notShareReason;
+    }
+
+    public String getNormDetail() {
+        return normDetail;
+    }
+
+    public void setNormDetail(String normDetail) {
+        this.normDetail = normDetail;
     }
 }

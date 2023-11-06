@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.inspur.dsp.open.sync.entity.CatalogFieldInfo;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @Description:
  * @Author: zhangchy05 on 2023/10/19 14:51
@@ -12,5 +14,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CatalogFieldInfoDao extends BaseMapper<CatalogFieldInfo> {
 
-    String getLatestOperationDate();
+    List<CatalogFieldInfo> getCatalogFieldInfoByCataIds(List<String> cataIds);
 }
