@@ -71,12 +71,6 @@ public class ResourceFile implements Serializable {
     @TableField("operate_type")
     private String operateType;
 
-    /**
-     * 文件资源订阅FTP路径
-     */
-    @TableField("subscribepath")
-    private String subscribepath;
-
 
     public String getResourceId() {
         return resourceId;
@@ -148,13 +142,5 @@ public class ResourceFile implements Serializable {
 
     public void setOperateType(String operateType) {
         this.operateType = operateType;
-    }
-
-    public String getSubscribepath() {
-        return subscribepath;
-    }
-
-    public void setSubscribepath(String subscribepath) {
-        this.subscribepath = subscribepath;
     }
 }

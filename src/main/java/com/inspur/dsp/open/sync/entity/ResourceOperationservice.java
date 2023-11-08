@@ -136,6 +136,54 @@ public class ResourceOperationservice implements Serializable {
     @TableField("webServiceData")
     private String webServiceData;
 
+    /**
+     * 技术支持联系人
+     */
+    @TableField("supporter")
+    private String supporter;
+
+    /**
+     * 技术支持联系人联系方式
+     */
+    @TableField("supporterPhone")
+    private String supporterPhone;
+
+    /**
+     * 开放门户调用超时时间
+     */
+    @TableField("timeout")
+    private Integer timeout;
+
+    /**
+     * 开放门户熔断的执行超时时间(秒）
+     */
+    @TableField("executionTimeout")
+    private String executionTimeout;
+
+    /**
+     * 开放门户熔断采样时间窗口(毫秒)
+     */
+    @TableField("rollingStatisticalWindow")
+    private String rollingStatisticalWindow;
+
+    /**
+     * 开放门户熔断的错误率
+     */
+    @TableField("errorThresholdPercentage")
+    private String errorThresholdPercentage;
+
+    /**
+     *
+     */
+    @TableField("soapHeader")
+    private String soapHeader;
+
+    /**
+     *
+     */
+    @TableField("soapBody")
+    private String soapBody;
+
 
     public String getCataId() {
         return cataId;
@@ -279,5 +327,69 @@ public class ResourceOperationservice implements Serializable {
 
     public void setWebServiceData(String webServiceData) {
         this.webServiceData = webServiceData;
+    }
+
+    public String getSupporter() {
+        return supporter;
+    }
+
+    public void setSupporter(String supporter) {
+        this.supporter = supporter;
+    }
+
+    public String getSupporterPhone() {
+        return supporterPhone;
+    }
+
+    public void setSupporterPhone(String supporterPhone) {
+        this.supporterPhone = supporterPhone;
+    }
+
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
+
+    public String getExecutionTimeout() {
+        return executionTimeout;
+    }
+
+    public void setExecutionTimeout(String executionTimeout) {
+        this.executionTimeout = executionTimeout;
+    }
+
+    public String getRollingStatisticalWindow() {
+        return rollingStatisticalWindow;
+    }
+
+    public void setRollingStatisticalWindow(String rollingStatisticalWindow) {
+        this.rollingStatisticalWindow = rollingStatisticalWindow;
+    }
+
+    public String getErrorThresholdPercentage() {
+        return errorThresholdPercentage;
+    }
+
+    public void setErrorThresholdPercentage(String errorThresholdPercentage) {
+        this.errorThresholdPercentage = errorThresholdPercentage;
+    }
+
+    public String getSoapHeader() {
+        return soapHeader;
+    }
+
+    public void setSoapHeader(String soapHeader) {
+        this.soapHeader = soapHeader;
+    }
+
+    public String getSoapBody() {
+        return soapBody;
+    }
+
+    public void setSoapBody(String soapBody) {
+        this.soapBody = soapBody;
     }
 }

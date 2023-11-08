@@ -113,12 +113,6 @@ public class ResourceTable implements Serializable {
     @TableField("remark")
     private String remark;
 
-    /**
-     * 实际库表资源对应表名
-     */
-    @TableField("targetTableName")
-    private String targetTableName;
-
 
 
     public String getResourceId() {
@@ -249,11 +243,4 @@ public class ResourceTable implements Serializable {
         this.remark = remark;
     }
 
-    public String getTargetTableName() {
-        return targetTableName;
-    }
-
-    public void setTargetTableName(String targetTableName) {
-        this.targetTableName = targetTableName;
-    }
 }
