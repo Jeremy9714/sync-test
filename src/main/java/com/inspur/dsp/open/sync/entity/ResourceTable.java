@@ -48,7 +48,7 @@ public class ResourceTable implements Serializable {
      * 目录名称
      */
     @TableField("cata_name")
-    private Date cataName;
+    private String cataName;
 
     /**
      * 数据表的json
@@ -155,11 +155,11 @@ public class ResourceTable implements Serializable {
         this.cataId = cataId;
     }
 
-    public Date getCataName() {
+    public String getCataName() {
         return cataName;
     }
 
-    public void setCataName(Date cataName) {
+    public void setCataName(String cataName) {
         this.cataName = cataName;
     }
 

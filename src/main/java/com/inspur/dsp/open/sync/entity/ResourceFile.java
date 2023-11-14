@@ -42,7 +42,7 @@ public class ResourceFile implements Serializable {
      * 业务系统
      */
     @TableField("app_id")
-    private Date appId;
+    private String appId;
 
     /**
      * 主题分类
@@ -104,11 +104,11 @@ public class ResourceFile implements Serializable {
         this.cataId = cataId;
     }
 
-    public Date getAppId() {
+    public String getAppId() {
         return appId;
     }
 
-    public void setAppId(Date appId) {
+    public void setAppId(String appId) {
         this.appId = appId;
     }
 

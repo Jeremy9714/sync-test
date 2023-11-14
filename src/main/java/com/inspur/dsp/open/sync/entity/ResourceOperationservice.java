@@ -56,7 +56,7 @@ public class ResourceOperationservice implements Serializable {
      * 数据字典：方法类型
      */
     @TableField("methodType")
-    private Date methodType;
+    private String methodType;
 
     /**
      * 1：开放;2：共享
@@ -225,11 +225,11 @@ public class ResourceOperationservice implements Serializable {
         this.creditCode = creditCode;
     }
 
-    public Date getMethodType() {
+    public String getMethodType() {
         return methodType;
     }
 
-    public void setMethodType(Date methodType) {
+    public void setMethodType(String methodType) {
         this.methodType = methodType;
     }
 
