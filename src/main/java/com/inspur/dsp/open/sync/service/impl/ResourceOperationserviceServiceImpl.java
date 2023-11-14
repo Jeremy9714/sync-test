@@ -35,11 +35,11 @@ public class ResourceOperationserviceServiceImpl extends ServiceImpl<ResourceOpe
     public boolean syncResourceOperationservice() {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_CATALOG_CATEGORY_KEY);
+            String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_RESOURCE_OPERATION_SERVICE_KEY);
             String latestOperationDate = resourceOperationserviceDao.getLatestOperationDate();
             // 无数据
             if (StringUtils.isBlank(latestOperationDate)) {
-                log.info("下行库无新增目录分类数据，不需要同步");
+                log.info("下行库无新增接口资源下行表数据，不需要同步");
                 return true;
             }
 
@@ -48,7 +48,7 @@ public class ResourceOperationserviceServiceImpl extends ServiceImpl<ResourceOpe
                 Date lastSyncTime = sdf.parse(lastSyncDate);
                 Date latestOperationTime = sdf.parse(latestOperationDate);
                 if (lastSyncTime.compareTo(latestOperationTime) >= 0) {
-                    log.info("下行库无新增目录分类数据，不需要同步");
+                    log.info("下行库无新增接口资源下行表数据，不需要同步");
                     return true;
                 }
                 wrapper.gt("operate_date", lastSyncDate);
@@ -56,12 +56,12 @@ public class ResourceOperationserviceServiceImpl extends ServiceImpl<ResourceOpe
 
             List<ResourceOperationservice> resultList = this.selectList(wrapper);
             log.debug("查询结果: {}", JSONObject.toJSONString(resultList));
-            redisTemplate.opsForValue().set(ServiceConstant.SYNC_CATALOG_CATEGORY_KEY, latestOperationDate);
+            redisTemplate.opsForValue().set(ServiceConstant.SYNC_RESOURCE_OPERATION_SERVICE_KEY, latestOperationDate);
 
 
             return true;
         } catch (Exception e) {
-            log.error("同步目录分类数据异常: {}", e);
+            log.error("--------同步异常----接口资源下行表", e);
             e.printStackTrace();
         }
         return false;

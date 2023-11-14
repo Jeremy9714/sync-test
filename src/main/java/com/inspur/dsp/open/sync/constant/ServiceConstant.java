@@ -17,6 +17,12 @@ public class ServiceConstant {
 
     public static String SYNC_CATALOG_FIELD_INFO_KEY;
 
+    public static String SYNC_RESOURCE_FILE_KEY;
+
+    public static String SYNC_RESOURCE_OPERATION_SERVICE_KEY;
+
+    public static String SYNC_RESOURCE_TABLE_KEY;
+
     @Value("${catalogCategory.key:}")
     private void setSyncCatalogCategoryKey(String key) {
         SYNC_CATALOG_CATEGORY_KEY = key;
@@ -30,5 +36,20 @@ public class ServiceConstant {
     @Value("${catalogFieldInfo.key:}")
     private void setSyncCatalogFieldInfoKey(String key) {
         SYNC_CATALOG_FIELD_INFO_KEY = key;
+    }
+
+    @Value("${resourceFile.key:}")
+    public void setSyncResourceFileKey(String syncResourceFileKey) {
+        SYNC_RESOURCE_FILE_KEY = syncResourceFileKey;
+    }
+
+    @Value("${resourceOperationservice.key:}")
+    public void setSyncResourceOperationServiceKey(String syncResourceOperationServiceKey) {
+        SYNC_RESOURCE_OPERATION_SERVICE_KEY = syncResourceOperationServiceKey;
+    }
+
+    @Value("${resourceTable.key:}")
+    public void setSyncResourceTableKey(String syncResourceTableKey) {
+        SYNC_RESOURCE_TABLE_KEY = syncResourceTableKey;
     }
 }

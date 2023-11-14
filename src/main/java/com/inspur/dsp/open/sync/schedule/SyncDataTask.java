@@ -1,16 +1,17 @@
 package com.inspur.dsp.open.sync.schedule;
 
-import com.inspur.dsp.open.sync.service.CatalogBasicInfoService;
-import com.inspur.dsp.open.sync.service.CatalogCategoryService;
+import com.inspur.dsp.open.sync.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description:
@@ -30,6 +31,16 @@ public class SyncDataTask {
     @Autowired
     private CatalogBasicInfoService catalogBasicinfoService;
 
+    @Autowired
+    private ResourceFileService resourceFileService;
+
+    @Autowired
+    private ResourceOperationserviceService resourceOperationserviceService;
+
+    @Autowired
+    private ResourceTableService resourceTableService;
+
+    @Async
     @Scheduled(cron = "0 0/5 * * * ?")
     public void syncTask() {
         Date startDate = new Date();
@@ -48,5 +59,29 @@ public class SyncDataTask {
         Date endDate = new Date();
         long time = endDate.getTime() - startDate.getTime();
         log.info("--------同步任务开始, 耗时为 {}毫秒", time);
+    }
+
+    @Async
+    @Scheduled(cron = "0 0/5 * * * ?")
+    public void syncResourceFile() {
+        log.info("--------开始同步----文件资源下行表");
+        resourceFileService.syncResourceFile();
+        log.info("--------结束同步----文件资源下行表");
+    }
+
+    @Async
+    @Scheduled(cron = "0 0/5 * * * ?")
+    public void syncResourceOperationservice() {
+        log.info("--------开始同步----接口资源下行表");
+        resourceOperationserviceService.syncResourceOperationservice();
+        log.info("--------结束同步----接口资源下行表");
+    }
+
+    @Async
+    @Scheduled(cron = "0/5 * * * * ?")
+    public void syncResourceTable() {
+        log.info("--------开始同步----库表资源下行表");
+        resourceTableService.syncResourceTable();
+        log.info("--------结束同步----库表资源下行表");
     }
 }
