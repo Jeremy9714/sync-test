@@ -31,7 +31,7 @@ public class CatalogFieldInfo implements Serializable {
     /**
      * 区共享平台目录主键
      */
-    @TableField("column_id")
+    @TableField("cata_id")
     private String cataId;
 
     /**

@@ -40,6 +40,9 @@ public class SyncDataTask {
     @Autowired
     private ResourceTableService resourceTableService;
 
+    @Autowired
+    private ResourceApplyReviewService resourceApplyReviewService;
+
     @Async
     @Scheduled(cron = "0 0/5 * * * ?")
     public void syncTask() {
@@ -55,6 +58,11 @@ public class SyncDataTask {
         log.info("--------开始同步目录信息数据");
         catalogBasicinfoService.syncCatalogBasicInfo();
         log.info("--------结束同步目录信息数据");
+
+        //3.同步资源申请审核过程表
+        log.info("--------开始同步资源申请审核过程表数据");
+        resourceApplyReviewService.syncResourceApplyReview();
+        log.info("--------结束同步资源申请审核过程表数据");
 
         Date endDate = new Date();
         long time = endDate.getTime() - startDate.getTime();

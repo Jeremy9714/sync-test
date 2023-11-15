@@ -211,6 +211,12 @@ public class CatalogBasicInfo implements Serializable {
     private String nationField;
 
     /**
+     * 其他国家所属领域
+     */
+    @TableField("other_nation_field")
+    private String otherNationField;
+
+    /**
      * 办理结果
      */
     @TableField("approval_result")
@@ -506,6 +512,14 @@ public class CatalogBasicInfo implements Serializable {
 
     public void setNationField(String nationField) {
         this.nationField = nationField;
+    }
+
+    public String getOtherNationField() {
+        return otherNationField;
+    }
+
+    public void setOtherNationField(String otherNationField) {
+        this.otherNationField = otherNationField;
     }
 
     public String getApprovalResult() {
