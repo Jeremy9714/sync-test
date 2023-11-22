@@ -7,6 +7,7 @@ import com.inspur.dsp.open.sync.constant.ServiceConstant;
 import com.inspur.dsp.open.sync.dao.ResourceFileDao;
 import com.inspur.dsp.open.sync.entity.ResourceFile;
 import com.inspur.dsp.open.sync.service.ResourceFileService;
+import com.inspur.dsp.open.sync.util.DubboService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,10 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+
+    @Autowired
+    private DubboService dubboService;
+
 
     @Transactional
     @Override
