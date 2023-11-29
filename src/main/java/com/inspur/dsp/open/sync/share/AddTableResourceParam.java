@@ -3,8 +3,11 @@ package com.inspur.dsp.open.sync.share;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
-public class AddTableResourceParam {
+public class AddTableResourceParam implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * 数据源id

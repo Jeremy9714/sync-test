@@ -103,8 +103,18 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
      * @param resourceTable
      * @return
      */
-    public AddTableResourceParam dealAddTableParams(ResourceTable resourceTable){
+    private AddTableResourceParam dealAddTableParams(ResourceTable resourceTable){
         AddTableResourceParam addTableResourceParam = new AddTableResourceParam();
+        // TODO 等待数据源信息提供
+        addTableResourceParam.setDataSourceIdCheck(null);
+        addTableResourceParam.setItemId(new String[]{resourceTable.getResourceId()});
+        addTableResourceParam.setCataId(resourceTable.getCataId());
+        String json = resourceTable.getTablejson();
+        JSONObject jsonObject = (JSONObject) JSONObject.parse(json);
+        String tableName = jsonObject.getString("table_sqlname");
+        String tableDesc = jsonObject.getString("table_name");
+        addTableResourceParam.setDataTableName(tableName);
+        addTableResourceParam.setTableDesc(tableDesc);
 
         if(ValidationUtil.validate(addTableResourceParam)){
             return addTableResourceParam;
@@ -117,7 +127,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
     /**
      * 调用，保存库表资源
      */
-    private boolean addTableResource(AddTableResourceParam addTableResourceParam){
+    private void addTableResource(AddTableResourceParam addTableResourceParam){
         String url = tableResourceUrl + "/admin/resource/addTableResource";
         log.debug("保存库表资源，url:{}", url);
         log.debug("保存库表资源，请求参数:{}", addTableResourceParam.toString());
@@ -129,7 +139,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
         log.debug("保存库表资源，返回参数:{}", result.toString());
         int code = result.getIntValue("code");
         if(code == 0){
-            return true;
+            log.info("保存库表资源成功。");
         }else{
             String msg = result.getString("msg");
             log.error("保存库表资源，接口调用失败。错误说明:{}", msg);
@@ -142,8 +152,13 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
      * @param resourceTable
      * @return
      */
-    public DeleteTableResourceParam dealDeleteTableParams(ResourceTable resourceTable){
+    private DeleteTableResourceParam dealDeleteTableParams(ResourceTable resourceTable){
         DeleteTableResourceParam deleteTableResourceParam = new DeleteTableResourceParam();
+        // TODO 等待数据源信息提供
+        deleteTableResourceParam.setDatasourceId(null);
+        // TODO 文档有误，对应不上
+        deleteTableResourceParam.setTableId(resourceTable.getResourceId());
+        deleteTableResourceParam.setCataId(resourceTable.getCataId());
 
         if(ValidationUtil.validate(deleteTableResourceParam)){
             return deleteTableResourceParam;
@@ -157,7 +172,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
      * 调用，删除库表资源
      * @return
      */
-    public boolean deleteTableResource(DeleteTableResourceParam deleteTableResourceParam){
+    private void deleteTableResource(DeleteTableResourceParam deleteTableResourceParam){
         String url = tableResourceUrl + "/admin/resource/deleteTableResource";
         log.debug("删除库表资源，url:{}", url);
         log.debug("删除库表资源，请求参数:{}", deleteTableResourceParam.toString());
@@ -169,7 +184,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
         log.debug("删除库表资源，返回参数:{}", result.toString());
         int code = result.getIntValue("code");
         if(code == 0){
-            return true;
+            log.info("删除库表资源成功。");
         }else{
             String msg = result.getString("msg");
             log.error("删除库表资源，接口调用失败。错误说明:{}", msg);
