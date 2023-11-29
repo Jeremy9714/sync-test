@@ -60,7 +60,9 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
                     log.info("下行库无新增文件资源下行表数据，不需要同步");
                     return true;
                 }
-                wrapper.gt("operate_date", lastSyncDate);
+                wrapper.gt("operate_date", lastSyncDate)
+                        .orderBy("operate_date")
+                        .last("limit 0,10");
             }
 
             List<ResourceFile> resultList = this.selectList(wrapper);
@@ -99,6 +101,30 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
      */
     private SaveFileResourceParam dealSaveFileParams(ResourceFile resourceFile){
         SaveFileResourceParam saveFileResourceParam = new SaveFileResourceParam();
+        saveFileResourceParam.setId(resourceFile.getResourceId());
+        saveFileResourceParam.setResName(resourceFile.getResourceName());
+        saveFileResourceParam.setResDesc(resourceFile.getRemark());
+        saveFileResourceParam.setCataId(resourceFile.getCataId());
+        // TODO 需要调用开放平台接口查询
+        saveFileResourceParam.setCataName(null);
+        saveFileResourceParam.setOrgId(null);
+        saveFileResourceParam.setOrgName(null);
+        saveFileResourceParam.setRegionCode(null);
+        // TODO 文档显示传null
+        saveFileResourceParam.setShareType(null);
+        // TODO 根据目录下行表的开放类型open_type
+        saveFileResourceParam.setOpenType(null);
+        // TODO 根据目录下行表的update_cycle
+        saveFileResourceParam.setUpdateCycle(null);
+        // TODO 根据中间程序自动生成
+        saveFileResourceParam.setCreatorId(null);
+        saveFileResourceParam.setCreatorName(null);
+
+        // TODO 先确认resource_file和resource_file_attachinfo表的主外键关系，根据attachinfo里的信息先下载文件，再上传到开放平台
+        saveFileResourceParam.setFileName(null);
+        saveFileResourceParam.setFileSize(null);
+        saveFileResourceParam.setFilePath(null);
+        saveFileResourceParam.setFileFormat(null);
 
         if(ValidationUtil.validate(saveFileResourceParam)){
             return saveFileResourceParam;
@@ -136,6 +162,7 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
         String code = (String) result.get("code");
         if(code.equals("200")){
             log.info("删除文件资源成功");
+            // TODO 资源下架后，查询一次目录，如果该目录下没有资源，就把目录也下架
         }else{
             String error = (String) result.get("error");
             log.error("删除文件资源，接口调用失败。错误说明:{}", error);

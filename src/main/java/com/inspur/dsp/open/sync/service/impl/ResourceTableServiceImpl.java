@@ -185,6 +185,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
         int code = result.getIntValue("code");
         if(code == 0){
             log.info("删除库表资源成功。");
+            // TODO 资源下架后，查询一次目录，如果该目录下没有资源，就把目录也下架
         }else{
             String msg = result.getString("msg");
             log.error("删除库表资源，接口调用失败。错误说明:{}", msg);

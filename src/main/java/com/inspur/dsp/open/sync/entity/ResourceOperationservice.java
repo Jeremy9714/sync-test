@@ -149,6 +149,12 @@ public class ResourceOperationservice implements Serializable {
     private String supporterPhone;
 
     /**
+     * 技术支持联系人联系方式
+     */
+    @TableField("supporteremail")
+    private String supporterEmail;
+
+    /**
      * 开放门户调用超时时间
      */
     @TableField("timeout")
@@ -343,6 +349,14 @@ public class ResourceOperationservice implements Serializable {
 
     public void setSupporterPhone(String supporterPhone) {
         this.supporterPhone = supporterPhone;
+    }
+
+    public String getSupporterEmail() {
+        return supporterEmail;
+    }
+
+    public void setSupporterEmail(String supporterEmail) {
+        this.supporterEmail = supporterEmail;
     }
 
     public Integer getTimeout() {
