@@ -19,8 +19,7 @@ public class DeleteTableResourceParam implements Serializable {
      * 库表id
      */
     @NotNull
-    @JsonProperty("table_id")
-    private String tableId;
+    private String[] itemId;
     /**
      * 目录id
      */
@@ -38,12 +37,12 @@ public class DeleteTableResourceParam implements Serializable {
         this.datasourceId = datasourceId;
     }
 
-    public String getTableId() {
-        return tableId;
+    public String[] getItemId() {
+        return itemId;
     }
 
-    public void setTableId(String tableId) {
-        this.tableId = tableId;
+    public void setItemId(String[] itemId) {
+        this.itemId = itemId;
     }
 
     public String getCataId() {

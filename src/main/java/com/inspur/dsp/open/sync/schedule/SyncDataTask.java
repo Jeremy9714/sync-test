@@ -55,9 +55,7 @@ public class SyncDataTask {
         log.info("--------结束同步目录分类数据");
 
         //2.同步目录信息数据
-        log.info("--------开始同步目录信息数据");
-        catalogBasicinfoService.syncCatalogBasicInfo();
-        log.info("--------结束同步目录信息数据");
+
 
         //3.同步资源申请审核过程表
         log.info("--------开始同步资源申请审核过程表数据");
@@ -67,6 +65,13 @@ public class SyncDataTask {
         Date endDate = new Date();
         long time = endDate.getTime() - startDate.getTime();
         log.info("--------同步任务开始, 耗时为 {}毫秒", time);
+    }
+    @Async
+    @Scheduled(cron = "0 0/5 * * * ?")
+    public void syncCatalogBasicInfo() {
+        log.info("--------开始同步----目录信息下行表");
+        catalogBasicinfoService.syncCatalogBasicInfo();
+        log.info("--------结束同步----目录信息下行表");
     }
 
     @Async

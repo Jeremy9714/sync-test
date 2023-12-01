@@ -156,8 +156,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
         DeleteTableResourceParam deleteTableResourceParam = new DeleteTableResourceParam();
         // TODO 等待数据源信息提供
         deleteTableResourceParam.setDatasourceId(null);
-        // TODO 文档有误，对应不上
-        deleteTableResourceParam.setTableId(resourceTable.getResourceId());
+        deleteTableResourceParam.setItemId(new String[]{resourceTable.getResourceId()});
         deleteTableResourceParam.setCataId(resourceTable.getCataId());
 
         if(ValidationUtil.validate(deleteTableResourceParam)){

@@ -2,6 +2,8 @@ package com.inspur.dsp.open.sync.util;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSONObject;
+import com.inspur.dsp.open.catalog.api.IOpenCatalogInfoService;
+import com.inspur.dsp.open.catalog.api.IOpenCatalogItemService;
 import com.inspur.dsp.open.common.Result;
 import com.inspur.dsp.open.resource.api.IOpenResourceApplyService;
 import com.inspur.dsp.resource.api.IResourceBaseService;
@@ -22,6 +24,12 @@ public class DubboService {
 
     @Reference(group = "openResource", check = false)
     private IOpenResourceApplyService openResourceApplyService;
+
+    @Reference(group = "openCatalog", check = false)
+    private IOpenCatalogInfoService openCatalogInfoService;
+
+    @Reference(group = "openCatalog", check = false)
+    private IOpenCatalogItemService openCatalogItemService;
 
 
     public JSONObject userLogin(String username, String password) {
@@ -62,4 +70,31 @@ public class DubboService {
         return openResourceApplyService.insertandUpadteResourceApply(resourceCheckList, resourceApplyList);
     }
 
+    /**
+     * 保存目录和信息项
+     * 支持新增和更新。
+     * @param catalogMap
+     * @return
+     */
+    public Result<Map<String, Object>> insertOrUpdateCatalogInfo(Map<String, Object> catalogMap){
+        return openCatalogInfoService.insertOrUpdateCatalogInfo(catalogMap);
+    }
+
+    /**
+     * 删除目录。
+     * @param cataId
+     * @return
+     */
+    public Result<Boolean> deleteCatalogInfo(String cataId){
+        return openCatalogInfoService.deleteCatalogInfo(cataId);
+    }
+
+    /**
+     * 删除信息项
+     * @param cataId
+     * @return
+     */
+    public Result<Boolean> deleteCatalogItemsByCataId(String cataId){
+        return openCatalogItemService.deleteCatalogItemsByCataId(cataId);
+    }
 }
