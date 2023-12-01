@@ -25,6 +25,8 @@ public class ServiceConstant {
 
     public static String SYNC_RESOURCE_APPLY_REVIEW_KEY;
 
+    public static String SYNC_RESOURCE_APPLY_KEY;
+
     @Value("${catalogCategory.key:}")
     private void setSyncCatalogCategoryKey(String key) {
         SYNC_CATALOG_CATEGORY_KEY = key;
@@ -58,5 +60,10 @@ public class ServiceConstant {
     @Value("${resourceApplyReview.key:}")
     public void setSyncResourceApplyReviewKey(String syncResourceApplyReviewKey) {
         SYNC_RESOURCE_APPLY_REVIEW_KEY = syncResourceApplyReviewKey;
+    }
+
+    @Value("${resourceApply.key:}")
+    public void setSyncResourceApplyKey(String syncResourceApplyKey) {
+        SYNC_RESOURCE_APPLY_KEY = syncResourceApplyKey;
     }
 }

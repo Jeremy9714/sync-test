@@ -2,10 +2,13 @@ package com.inspur.dsp.open.sync.util;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSONObject;
+import com.inspur.dsp.open.common.Result;
+import com.inspur.dsp.open.resource.api.IOpenResourceApplyService;
 import com.inspur.dsp.resource.api.IResourceBaseService;
 import com.inspur.service.UserAuthorityService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -16,6 +19,9 @@ public class DubboService {
 
     @Reference(group = "metaresource", check = false)
     private IResourceBaseService resourceBaseService;
+
+    @Reference(group = "openResource", check = false)
+    private IOpenResourceApplyService openResourceApplyService;
 
 
     public JSONObject userLogin(String username, String password) {
@@ -44,4 +50,16 @@ public class DubboService {
     public Map<String, Object> deleteResource(String id){
         return resourceBaseService.deleteResource(id);
     }
+
+    /**
+     * 更新资源申请的审核结果
+     * 更新资源申请信息同时插入审核日志。
+     * @param resourceCheckList
+     * @param resourceApplyList
+     * @return
+     */
+    public Result<Boolean> insertandUpadteResourceApply(List<Map<String, Object>> resourceCheckList, List<Map<String, Object>> resourceApplyList){
+        return openResourceApplyService.insertandUpadteResourceApply(resourceCheckList, resourceApplyList);
+    }
+
 }
