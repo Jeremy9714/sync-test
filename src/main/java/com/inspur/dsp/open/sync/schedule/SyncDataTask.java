@@ -43,6 +43,9 @@ public class SyncDataTask {
     @Autowired
     private ResourceApplyReviewService resourceApplyReviewService;
 
+    @Autowired
+    private ResourceApplyService resourceApplyService;
+
     @Async
     @Scheduled(cron = "0 0/5 * * * ?")
     public void syncTask() {
@@ -96,5 +99,27 @@ public class SyncDataTask {
         log.info("--------开始同步----库表资源下行表");
         resourceTableService.syncResourceTable();
         log.info("--------结束同步----库表资源下行表");
+    }
+
+    /**
+     * 下行，
+     */
+    @Async
+    @Scheduled(cron = "0 0/5 * * * ?")
+    public void syncResourceApply() {
+        log.info("--------开始同步----资源申请的审核结果");
+        resourceApplyService.syncResourceApply();
+        log.info("--------结束同步----资源申请的审核结果");
+    }
+
+    /**
+     * 上行，同步申请表的增量数据
+     */
+    @Async
+    @Scheduled(cron = "0 0/1 * * * ?")
+    public void syncResourceApplyIncrement() {
+        log.info("--------开始同步----申请表的增量数据");
+        resourceApplyService.syncResourceApplyIncrement();
+        log.info("--------结束同步----申请表的增量数据");
     }
 }

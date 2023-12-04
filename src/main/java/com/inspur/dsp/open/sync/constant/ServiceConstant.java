@@ -27,6 +27,8 @@ public class ServiceConstant {
 
     public static String SYNC_RESOURCE_APPLY_KEY;
 
+    public static String SYNC_RESOURCE_APPLY_INCREMENT_KEY;
+
     @Value("${catalogCategory.key:}")
     private void setSyncCatalogCategoryKey(String key) {
         SYNC_CATALOG_CATEGORY_KEY = key;
@@ -65,5 +67,10 @@ public class ServiceConstant {
     @Value("${resourceApply.key:}")
     public void setSyncResourceApplyKey(String syncResourceApplyKey) {
         SYNC_RESOURCE_APPLY_KEY = syncResourceApplyKey;
+    }
+
+    @Value("${resourceApplyIncrement.key:}")
+    public void setSyncResourceApplyIncrementKey(String syncResourceApplyIncrementKey) {
+        SYNC_RESOURCE_APPLY_INCREMENT_KEY = syncResourceApplyIncrementKey;
     }
 }

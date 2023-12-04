@@ -71,6 +71,19 @@ public class DubboService {
     }
 
     /**
+     * 查询申请表的增量数据
+     * 根据参数applyTime，返回申请表中申请时间大于该时间且状态为待审核状态的数据
+     * 查询时间，要求格式：yyyy-MM-dd hh:mm:ss
+     * @param applyTime
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public Result<Map<String, Object>> getResourceApplyByPage(String applyTime, int pageNum, int pageSize){
+        return openResourceApplyService.getResourceApplyByPage(applyTime, pageNum, pageSize);
+    }
+
+    /**
      * 保存目录和信息项
      * 支持新增和更新。
      * @param catalogMap

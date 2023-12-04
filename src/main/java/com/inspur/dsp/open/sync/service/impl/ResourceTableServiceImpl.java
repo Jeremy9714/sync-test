@@ -31,7 +31,7 @@ import java.util.List;
 public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, ResourceTable> implements ResourceTableService {
     private static final Logger log = LoggerFactory.getLogger(ResourceTableServiceImpl.class);
 
-    @Value("${share.tableResource.url}")
+    @Value("${down.tableResource.url}")
     private String tableResourceUrl;
 
     @Autowired

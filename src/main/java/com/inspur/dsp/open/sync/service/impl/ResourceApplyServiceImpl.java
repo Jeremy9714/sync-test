@@ -3,11 +3,15 @@ package com.inspur.dsp.open.sync.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.inspur.dsp.open.common.Result;
 import com.inspur.dsp.open.sync.constant.ServiceConstant;
 import com.inspur.dsp.open.sync.dao.ResourceApplyDao;
 import com.inspur.dsp.open.sync.entity.ResourceApply;
 import com.inspur.dsp.open.sync.service.ResourceApplyService;
+import com.inspur.dsp.open.sync.up.ResourceApplyParam;
+import com.inspur.dsp.open.sync.up.ShareApiReqService;
 import com.inspur.dsp.open.sync.util.DubboService;
+import com.inspur.dsp.open.sync.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -33,6 +38,9 @@ public class ResourceApplyServiceImpl extends ServiceImpl<ResourceApplyDao, Reso
 
     @Autowired
     private DubboService dubboService;
+
+    @Autowired
+    private ShareApiReqService shareApiReqService;
 
 
     @Transactional
@@ -90,5 +98,78 @@ public class ResourceApplyServiceImpl extends ServiceImpl<ResourceApplyDao, Reso
         return false;
     }
 
+
+    /**
+     * 同步申请表的增量数据
+     */
+    public void syncResourceApplyIncrement(){
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_RESOURCE_APPLY_INCREMENT_KEY);
+            if (StringUtils.isBlank(lastSyncDate)) {
+                lastSyncDate = sdf.format(new Date());
+            }
+            Result<Map<String, Object>> result = dubboService.getResourceApplyByPage(lastSyncDate, 1, 10);
+            int code = result.getCode();
+            if(code != 0){
+                String msg = result.getMessage();
+                log.error("申请表的增量数据查询失败:{}", msg);
+                return;
+            }
+            Map<String, Object> resultMap = result.getObject();
+            int total = (int) resultMap.get("total");
+            if(total == 0){
+                lastSyncDate = sdf.format(new Date());
+                redisTemplate.opsForValue().set(ServiceConstant.SYNC_RESOURCE_APPLY_INCREMENT_KEY, lastSyncDate);
+                log.debug("同步申请表，无，增量数据");
+                return;
+            }
+            List<Map<String, Object>> resultList = (List<Map<String, Object>>) resultMap.get("records");
+            for(Map<String, Object> map : resultList){
+                ResourceApplyParam resourceApplyParam = new ResourceApplyParam();
+                resourceApplyParam.setResource_id((String)map.get("resourceId"));
+                resourceApplyParam.setApply_user((String)map.get("applyUserName"));
+                resourceApplyParam.setContact((String)map.get("applyUserContactPhone"));
+                resourceApplyParam.setCredit_code("1");
+                resourceApplyParam.setEnd_date((Date)map.get("applyEndTime"));
+                resourceApplyParam.setUse_scope("1");
+                resourceApplyParam.setUse_desc("1");
+                // TODO 开放平台下载附件，上传到共享平台，然后获取attach信息
+                resourceApplyParam.setAttach(null);
+                if(map.get("resourceType").equals("file")){
+                    resourceApplyParam.setApply_type("3");
+                }else if(map.get("resourceType").equals("service")){
+                    resourceApplyParam.setApply_type("4");
+                }else{
+                    resourceApplyParam.setApply_type("1");
+                }
+                resourceApplyParam.setFieldid("1");
+                resourceApplyParam.setApply_id(null);
+                resourceApplyParam.setSituation("1");
+                resourceApplyParam.setExtranetIp("1");
+                resourceApplyParam.setOtherRequire("1");
+                resourceApplyParam.setDeployAddress("1");
+                resourceApplyParam.setEmergencyLevel("1");
+                resourceApplyParam.setEmergencyReason("1");
+                resourceApplyParam.setApplyBasis((String)map.get("applyReason"));
+
+                if(ValidationUtil.validate(resourceApplyParam)){
+                    boolean flag = shareApiReqService.resourceApply(resourceApplyParam);
+                    if(flag){
+                        redisTemplate.opsForValue().set(ServiceConstant.SYNC_RESOURCE_APPLY_INCREMENT_KEY, (String)map.get("applyTime"));
+                    }else{
+                        log.error("调共享平台接口，请求失败");
+                        throw new RuntimeException("调共享平台接口，请求失败");
+                    }
+                }else{
+                    log.error("调共享平台接口，请求参数存在必填项为空，需检查参数:{}", resourceApplyParam.toString());
+                    throw new RuntimeException("请求参数不合规");
+                }
+            }
+        }catch (Exception e){
+            log.error("申请表的增量数据，同步失败", e);
+        }
+
+    }
 
 }

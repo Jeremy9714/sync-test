@@ -6,4 +6,6 @@ import com.inspur.dsp.open.sync.entity.ResourceApply;
 public interface ResourceApplyService extends IService<ResourceApply> {
 
     boolean syncResourceApply();
+
+    void syncResourceApplyIncrement();
 }

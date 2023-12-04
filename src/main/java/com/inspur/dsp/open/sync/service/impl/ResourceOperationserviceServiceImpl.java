@@ -33,7 +33,7 @@ import java.util.Map;
 public class ResourceOperationserviceServiceImpl extends ServiceImpl<ResourceOperationserviceDao, ResourceOperationservice> implements ResourceOperationserviceService {
     private static final Logger log = LoggerFactory.getLogger(ResourceOperationserviceServiceImpl.class);
 
-    @Value("${share.apiResource.url}")
+    @Value("${down.apiResource.url}")
     private String apiResourceUrl;
 
     @Autowired
