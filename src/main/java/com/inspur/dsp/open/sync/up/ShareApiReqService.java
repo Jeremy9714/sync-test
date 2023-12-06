@@ -76,4 +76,33 @@ public class ShareApiReqService {
         return access_token;
     }
 
+    /**
+     * 资源申请附件上传接口
+     */
+    public String fileupload(String filename, String filecontent){
+        String url = shareUrl + "/basic/apply/fileupload";
+        log.debug("资源申请附件上传接口，url:{}", url);
+        String access_token = getToken();
+        HttpHeaders httpHeaders = new HttpHeaders() {{
+            add("Authorization", access_token);
+        }};
+        Map<String, String> params = new HashMap<>();
+        params.put("filename", filename);
+        params.put("filecontent", filecontent);
+        HttpEntity httpEntity = new HttpEntity<>(params, httpHeaders);
+        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
+        log.debug("资源申请附件上传接口，返回参数:{}", result.toString());
+        String code = result.getString("code");
+        if("1".equals(code)){
+            JSONObject dataMap = result.getJSONObject("data");
+            String cascadeguid = dataMap.getString("cascadeguid");
+            log.debug("资源申请附件上传接口，请求成功");
+            return cascadeguid;
+        }else{
+            String message = result.getString("message");
+            log.debug("资源申请附件上传接口，请求失败:{}", message);
+            return null;
+        }
+    }
+
 }
