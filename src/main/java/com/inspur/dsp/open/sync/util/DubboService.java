@@ -4,10 +4,14 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSONObject;
 import com.inspur.dsp.open.catalog.api.IOpenCatalogInfoService;
 import com.inspur.dsp.open.catalog.api.IOpenCatalogItemService;
+import com.inspur.dsp.open.catalog.api.IOpenStatisticCatalogService;
 import com.inspur.dsp.open.common.Result;
 import com.inspur.dsp.open.resource.api.IOpenResourceApplyService;
 import com.inspur.dsp.resource.api.IResourceBaseService;
+import com.inspur.service.OrganizationService;
 import com.inspur.service.UserAuthorityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +19,13 @@ import java.util.Map;
 
 @Service
 public class DubboService {
+    private static final Logger log = LoggerFactory.getLogger(DubboService.class);
 
     @Reference(group = "bsp", check = false)
     private UserAuthorityService userAuthorityService;
+
+    @Reference(group = "bsp", check = false)
+    private OrganizationService organizationService;
 
     @Reference(group = "metaresource", check = false)
     private IResourceBaseService resourceBaseService;
@@ -30,6 +38,9 @@ public class DubboService {
 
     @Reference(group = "openCatalog", check = false)
     private IOpenCatalogItemService openCatalogItemService;
+
+    @Reference(group = "openCatalog", check = false)
+    private IOpenStatisticCatalogService openStatisticCatalogService;
 
 
     public JSONObject userLogin(String username, String password) {
@@ -109,5 +120,62 @@ public class DubboService {
      */
     public Result<Boolean> deleteCatalogItemsByCataId(String cataId){
         return openCatalogItemService.deleteCatalogItemsByCataId(cataId);
+    }
+
+    /**
+     * 根据统一社会信用代码查询组织机构的organ_code/name/region/region_name
+     * 根据参数统一社会信用代码（org_num），查询组织机构详细信息
+     *
+     * {
+     *   "msg": "成功",
+     *   "code": "200",
+     *   "data": {
+     *     "CODE": "370000000098",
+     *     "ORGAN_LEVEL": "2",
+     *     "REGION_NAME": "山东省",
+     *     "REGION_CODE": "370000000000",
+     *     "ID": "07C88413D8584C1B9E7109956DB179E9",
+     *     "SHORT_CODE": "370098",
+     *     "SHORT_NAME": "省水利厅",
+     *     "NAME": "山东省水利厅"
+     *   }
+     * }
+     * @param orgNum
+     * @return
+     */
+    public JSONObject getOrganInfoByOrgNum(String orgNum){
+        JSONObject regionInfo =  organizationService.getOrganInfoByOrgNum(orgNum);
+        int code = regionInfo.getInteger("code");
+        if(code != 200){
+            log.error("统一社会信用代码查询失败，{}", orgNum);
+            throw new RuntimeException("统一社会信用代码查询失败");
+        }
+        JSONObject regionData = regionInfo.getJSONObject("data");
+        return regionData;
+    }
+
+    /**
+     * 获取目录下挂载的已发布资源数量
+     * @param cataId
+     * @return
+     */
+    public Result<Map<String, Object>> queryByCataId(String cataId){
+        return openStatisticCatalogService.queryByCataId(cataId);
+    }
+
+    /**
+     * 根据目录ID获取目录名称
+     * @param cataId
+     * @return
+     */
+    public String getCatalogInfoById(String cataId){
+        Result<Map<String, Object>> result = openCatalogInfoService.getCatalogInfoById(cataId);
+        int code = result.getCode();
+        if(code != 200){
+            log.error("根据目录ID获取目录名称查询失败，{}", cataId);
+            throw new RuntimeException("根据目录ID获取目录名称查询失败");
+        }
+        Map<String, Object> catalogInfo = result.getObject();
+        return (String) catalogInfo.get("cataTitle");
     }
 }

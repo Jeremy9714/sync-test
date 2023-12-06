@@ -13,6 +13,7 @@ import com.inspur.dsp.open.sync.service.CatalogFieldInfoService;
 import com.inspur.dsp.open.sync.down.CataItem;
 import com.inspur.dsp.open.sync.down.CatalogInfo;
 import com.inspur.dsp.open.sync.util.DubboService;
+import com.inspur.dsp.open.sync.util.SyncDataUtil;
 import com.inspur.dsp.open.sync.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -86,7 +87,7 @@ public class CatalogBasicInfoServiceImpl extends ServiceImpl<CatalogBasicInfoDao
                         insertOrUpdateCatalogInfo(dealUpdateCatalogInfoParam(catalogBasicInfo));
                         break;
                     case "D":
-//                        deleteTableResource(dealDeleteTableParams(resourceTable));
+                        deleteCatalog(catalogBasicInfo.getCataId());
                         break;
                     default:
                         throw new RuntimeException("目录信息，无此操作类型");
@@ -120,17 +121,18 @@ public class CatalogBasicInfoServiceImpl extends ServiceImpl<CatalogBasicInfoDao
         catalogInfo.setResourceFormat(catalogBasicInfo.getCataType());
         catalogInfo.setUpdateCycle(catalogBasicInfo.getUpdateCycle());
         catalogInfo.setCataSource("1");
-        // TODO 根据统一社会信用代码查询
-        catalogInfo.setRegionCode(null);
-        catalogInfo.setRegionName(null);
+        // 根据统一社会信用代码查询
+        JSONObject regionData = dubboService.getOrganInfoByOrgNum(catalogBasicInfo.getRegisterOrgCode());
+        catalogInfo.setRegionCode(regionData.getString("REGION_CODE"));
+        catalogInfo.setRegionName(regionData.getString("REGION_NAME"));
         catalogInfo.setCataStatus(7);
-        // TODO 中间程序生成
-        catalogInfo.setCreateTime(null);
-        catalogInfo.setCreatorId(null);
-        catalogInfo.setCreatorName(null);
-        catalogInfo.setUpdateTime(null);
-        catalogInfo.setUpdaterId(null);
-        catalogInfo.setUpdaterName(null);
+        // 中间程序生成
+        catalogInfo.setCreateTime(SyncDataUtil.getCurrentTime());
+        catalogInfo.setCreatorId(SyncDataUtil.CURRENT_ID);
+        catalogInfo.setCreatorName(SyncDataUtil.CURRENT_NAME);
+        catalogInfo.setUpdateTime(SyncDataUtil.getCurrentTime());
+        catalogInfo.setUpdaterId(SyncDataUtil.CURRENT_ID);
+        catalogInfo.setUpdaterName(SyncDataUtil.CURRENT_NAME);
         if(!ValidationUtil.validate(catalogInfo)){
             log.error("保存目录信息，请求参数catalogInfo存在必填项为空，需检查参数:{}", catalogInfo.toString());
             throw new RuntimeException("请求参数不合规");
@@ -146,8 +148,7 @@ public class CatalogBasicInfoServiceImpl extends ServiceImpl<CatalogBasicInfoDao
         cataItem.setDataFormat(catalogFieldInfo.getColumnType());
         cataItem.setLength(catalogFieldInfo.getColumnLength());
         cataItem.setCataId(catalogFieldInfo.getCataId());
-        // TODO 中间程序生成
-        cataItem.setUpdateTime(null);
+        cataItem.setUpdateTime(SyncDataUtil.getCurrentTime());
         if(!ValidationUtil.validate(cataItem)){
             log.error("保存目录信息，请求参数cataItem存在必填项为空，需检查参数:{}", cataItem.toString());
             throw new RuntimeException("请求参数不合规");
@@ -156,18 +157,46 @@ public class CatalogBasicInfoServiceImpl extends ServiceImpl<CatalogBasicInfoDao
         catalogMap.put("cataItemList", cataItemList);
 
         Map<String, Object> cataGroup = new HashMap<>();
-        // TODO 中间程序生成
-        cataGroup.put("linkId", null);
+        // 中间程序生成
+        cataGroup.put("linkId", UUID.randomUUID().toString());
         cataGroup.put("cataId", catalogFieldInfo.getCataId());
         catalogMap.put("cataGroupList", cataGroup);
 
         return catalogMap;
     }
 
+    /**
+     * 保存目录和信息项
+     * @param catalogMap
+     */
     private void insertOrUpdateCatalogInfo(Map<String,Object> catalogMap){
         Result<Map<String, Object>> result = dubboService.insertOrUpdateCatalogInfo(catalogMap);
+        log.debug("保存目录和信息项，返回结果:{}", result.toString());
         int code = result.getCode();
-        // TODO code等于啥
+        if(code == 200){
+            log.info("保存目录和信息项成功");
+        }else{
+            String msg = result.getMessage();
+            log.error("保存目录和信息项失败，{}", msg);
+            throw new RuntimeException("保存目录和信息项失败");
+        }
+    }
+
+    /**
+     * 删除目录和信息项
+     * @param cataId
+     */
+    private void deleteCatalog(String cataId){
+        Result<Boolean> catalogInfoResult = dubboService.deleteCatalogInfo(cataId);
+        log.debug("删除目录，返回结果:{}", catalogInfoResult.toString());
+        Result<Boolean> catalogItemsResult = dubboService.deleteCatalogItemsByCataId(cataId);
+        log.debug("删除信息项，返回结果:{}", catalogInfoResult.toString());
+        if(catalogInfoResult.getObject() && catalogItemsResult.getObject()){
+            log.info("删除目录和信息项成功，{}", cataId);
+        }else{
+            log.error("删除目录和信息项失败");
+            throw new RuntimeException("删除目录和信息项失败");
+        }
     }
 
 }

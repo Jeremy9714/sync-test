@@ -942,4 +942,12 @@ public interface OrganizationService {
 	 * @return
 	 */
 	public List<Map<String, Object>> findRegionTree(String parent_code, boolean defaultTree);
+
+	/**
+	 * 根据统一社会信用代码查询组织机构的organ_code/name/region/region_name
+	 * 根据参数统一社会信用代码（org_num），查询组织机构详细信息
+	 * @param orgNum
+	 * @return
+	 */
+	JSONObject getOrganInfoByOrgNum(String orgNum);
 }

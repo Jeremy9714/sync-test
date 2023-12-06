@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.open.common.Result;
 import com.inspur.dsp.open.sync.constant.ServiceConstant;
 import com.inspur.dsp.open.sync.dao.ResourceApplyDao;
+import com.inspur.dsp.open.sync.down.OpenApiReqService;
 import com.inspur.dsp.open.sync.entity.ResourceApply;
 import com.inspur.dsp.open.sync.service.ResourceApplyService;
 import com.inspur.dsp.open.sync.up.ResourceApplyParam;
@@ -18,13 +19,10 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,9 +33,6 @@ import java.util.Map;
 @Service
 public class ResourceApplyServiceImpl extends ServiceImpl<ResourceApplyDao, ResourceApply> implements ResourceApplyService {
     private static final Logger log = LoggerFactory.getLogger(ResourceApplyServiceImpl.class);
-
-    @Value("${down.rcservice.url}")
-    private String rcserviceUrl;
 
     @Autowired
     private ResourceApplyDao resourceApplyDao;
@@ -52,7 +47,7 @@ public class ResourceApplyServiceImpl extends ServiceImpl<ResourceApplyDao, Reso
     private ShareApiReqService shareApiReqService;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private OpenApiReqService openApiReqService;
 
     @Transactional
     @Override
@@ -204,8 +199,7 @@ public class ResourceApplyServiceImpl extends ServiceImpl<ResourceApplyDao, Reso
      * @param doc_id
      */
     private String dealAttach(String doc_id, String filename){
-        String url = rcserviceUrl + "/doc?doc_id=" + doc_id;
-        ResponseEntity<byte[]> result = restTemplate.exchange(url, HttpMethod.GET, null, byte[].class);
+        ResponseEntity<byte[]> result = openApiReqService.fileDownload(doc_id);
         byte[] base64Bytes = Base64.encodeBase64(result.getBody());
         String base64Str = new String(base64Bytes);
 

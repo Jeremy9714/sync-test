@@ -5,36 +5,30 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.open.sync.constant.ServiceConstant;
 import com.inspur.dsp.open.sync.dao.ResourceOperationserviceDao;
+import com.inspur.dsp.open.sync.down.AddApiResourceParam;
+import com.inspur.dsp.open.sync.down.OpenApiReqService;
+import com.inspur.dsp.open.sync.down.ResourceService;
 import com.inspur.dsp.open.sync.entity.ResourceOperationservice;
 import com.inspur.dsp.open.sync.service.ResourceOperationserviceService;
-import com.inspur.dsp.open.sync.down.AddApiResourceParam;
-import com.inspur.dsp.open.sync.down.ResourceService;
+import com.inspur.dsp.open.sync.util.DubboService;
+import com.inspur.dsp.open.sync.util.SyncDataUtil;
 import com.inspur.dsp.open.sync.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Service
 public class ResourceOperationserviceServiceImpl extends ServiceImpl<ResourceOperationserviceDao, ResourceOperationservice> implements ResourceOperationserviceService {
     private static final Logger log = LoggerFactory.getLogger(ResourceOperationserviceServiceImpl.class);
-
-    @Value("${down.apiResource.url}")
-    private String apiResourceUrl;
 
     @Autowired
     private ResourceOperationserviceDao resourceOperationserviceDao;
@@ -43,7 +37,10 @@ public class ResourceOperationserviceServiceImpl extends ServiceImpl<ResourceOpe
     private RedisTemplate<String, String> redisTemplate;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private OpenApiReqService openApiReqService;
+
+    @Autowired
+    private DubboService dubboService;
 
     @Transactional
     @Override
@@ -78,13 +75,13 @@ public class ResourceOperationserviceServiceImpl extends ServiceImpl<ResourceOpe
                 String operateType = resourceOperationservice.getOperateType();
                 switch (operateType){
                     case "I":
-                        addApiResource(dealAddApiParams(resourceOperationservice));
+                        openApiReqService.addApiResource(dealAddApiParams(resourceOperationservice));
                         break;
                     case "U":
-                        addApiResource(dealAddApiParams(resourceOperationservice));
+                        openApiReqService.addApiResource(dealAddApiParams(resourceOperationservice));
                         break;
                     case "D":
-                        deleteApiResource(resourceOperationservice.getServiceId(), resourceOperationservice.getCataId());
+                        openApiReqService.deleteApiResource(resourceOperationservice.getServiceId(), resourceOperationservice.getCataId());
                         break;
                     default:
                         throw new RuntimeException("接口资源，无此操作类型");
@@ -111,12 +108,11 @@ public class ResourceOperationserviceServiceImpl extends ServiceImpl<ResourceOpe
         addApiResourceParam.setServiceId(resourceOperationservice.getServiceId());
         addApiResourceParam.setCallType(resourceOperationservice.getServiceType());
         addApiResourceParam.setEndpoint(resourceOperationservice.getUrl());
-        // TODO 文档里的值对应不上，类型不匹配
         addApiResourceParam.setTimeout(resourceOperationservice.getTimeout()+"");
         addApiResourceParam.setRestRequestMethod(resourceOperationservice.getMethodType());
         addApiResourceParam.setWsNamespace(null);
         // TODO 文档里的值对应不上
-        addApiResourceParam.setWsHeader("");
+        addApiResourceParam.setWsHeader("soapHeader");
         addApiResourceParam.setWsMethod(null);
         ResourceService resourceService = new ResourceService();
         resourceService.setServiceName(resourceOperationservice.getCnName());
@@ -125,8 +121,7 @@ public class ResourceOperationserviceServiceImpl extends ServiceImpl<ResourceOpe
         resourceService.setServiceType(resourceOperationservice.getServiceType());
         resourceService.setServiceTag(null);
         resourceService.setVersion("1.0");
-        // TODO 文档里的值对应不上
-        resourceService.setContext(null);
+        resourceService.setContext("uri");
         resourceService.setApprovalAuthority("provider");
         resourceService.setResultSample(resourceOperationservice.getOutput());
         // TODO 无
@@ -146,18 +141,20 @@ public class ResourceOperationserviceServiceImpl extends ServiceImpl<ResourceOpe
         resourceService.setContactPhone(resourceOperationservice.getSupporterPhone());
         resourceService.setContactEmail(resourceOperationservice.getSupporterEmail());
         resourceService.setCreateTime(new Date());
-        // TODO 根据中间程序自动生成
-        resourceService.setCreatorId(null);
-        resourceService.setCreatorName(null);
+        // 根据中间程序自动生成
+        resourceService.setCreatorId(SyncDataUtil.CURRENT_ID);
+        resourceService.setCreatorName(SyncDataUtil.CURRENT_NAME);
         resourceService.setUpdateTime(new Date());
-        resourceService.setUpdaterId(null);
-        resourceService.setUpdaterName(null);
-        // TODO 去开放平台获取
-        resourceService.setCataTitle(null);
-        resourceService.setRegionCode(null);
-        resourceService.setRegionName(null);
-        resourceService.setOrgCode(null);
-        resourceService.setOrgName(null);
+        resourceService.setUpdaterId(SyncDataUtil.CURRENT_ID);
+        resourceService.setUpdaterName(SyncDataUtil.CURRENT_NAME);
+        // 去开放平台获取
+        String cataTitle = dubboService.getCatalogInfoById(resourceOperationservice.getCataId());
+        resourceService.setCataTitle(cataTitle);
+        JSONObject regionData = dubboService.getOrganInfoByOrgNum(resourceOperationservice.getCreditCode());
+        resourceService.setRegionCode(regionData.getString("REGION_CODE"));
+        resourceService.setRegionName(regionData.getString("REGION_NAME"));
+        resourceService.setOrgCode(regionData.getString("CODE"));
+        resourceService.setOrgName(regionData.getString("NAME"));
 
         addApiResourceParam.setResourceService(resourceService);
 
@@ -169,56 +166,4 @@ public class ResourceOperationserviceServiceImpl extends ServiceImpl<ResourceOpe
         }
     }
 
-    /**
-     * 调用，保存接口资源
-     * @param addApiResourceParam
-     */
-    private void addApiResource(AddApiResourceParam addApiResourceParam){
-        String url = apiResourceUrl + "/admin/resource/addApiResource";
-        log.debug("保存接口资源，url:{}", url);
-        log.debug("保存接口资源，请求参数:{}", addApiResourceParam.toString());
-        HttpHeaders httpHeaders = new HttpHeaders() {{
-            add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-        }};
-        HttpEntity httpEntity = new HttpEntity<>(addApiResourceParam, httpHeaders);
-        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
-        log.debug("保存接口资源，返回参数:{}", result.toString());
-        int code = result.getIntValue("code");
-        if(code == 0){
-            log.info("保存接口资源成功。");
-        }else{
-            String msg = result.getString("msg");
-            log.error("保存接口资源，接口调用失败。错误说明:{}", msg);
-            throw new RuntimeException("接口调用失败");
-        }
-    }
-
-    /**
-     * 删除接口资源
-     * @param apiId 接口资源id
-     * @param cataId 目录id
-     */
-    private void deleteApiResource(String apiId, String cataId){
-        String url = apiResourceUrl + "/admin/resource/deleteApiResource";
-        log.debug("删除接口资源，url:{}", url);
-        log.debug("删除接口资源，请求参数:{} 和 {}", apiId, cataId);
-        HttpHeaders httpHeaders = new HttpHeaders() {{
-            add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-        }};
-        Map<String, String> map = new HashMap<>();
-        map.put("api_id", apiId);
-        map.put("cataid", cataId);
-        HttpEntity httpEntity = new HttpEntity<>(map, httpHeaders);
-        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
-        log.debug("保存接口资源，返回参数:{}", result.toString());
-        int code = result.getIntValue("code");
-        if(code == 0){
-            log.info("删除接口资源成功。");
-            // TODO 资源下架后，查询一次目录，如果该目录下没有资源，就把目录也下架
-        }else{
-            String msg = result.getString("msg");
-            log.error("删除接口资源，接口调用失败。错误说明:{}", msg);
-            throw new RuntimeException("接口调用失败");
-        }
-    }
 }

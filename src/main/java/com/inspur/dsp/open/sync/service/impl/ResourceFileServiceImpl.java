@@ -4,12 +4,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.open.sync.constant.ServiceConstant;
+import com.inspur.dsp.open.sync.dao.CatalogBasicInfoDao;
 import com.inspur.dsp.open.sync.dao.ResourceFileDao;
+import com.inspur.dsp.open.sync.entity.CatalogBasicInfo;
 import com.inspur.dsp.open.sync.entity.ResourceFile;
 import com.inspur.dsp.open.sync.service.ResourceFileService;
 import com.inspur.dsp.open.sync.down.SaveFileResourceParam;
 import com.inspur.dsp.open.sync.util.DubboService;
 import com.inspur.dsp.open.sync.util.JsonUtil;
+import com.inspur.dsp.open.sync.util.SyncDataUtil;
 import com.inspur.dsp.open.sync.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -31,6 +34,9 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
 
     @Autowired
     private ResourceFileDao resourceFileDao;
+
+    @Autowired
+    private CatalogBasicInfoDao catalogBasicInfoDao;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -105,20 +111,23 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
         saveFileResourceParam.setResName(resourceFile.getResourceName());
         saveFileResourceParam.setResDesc(resourceFile.getRemark());
         saveFileResourceParam.setCataId(resourceFile.getCataId());
-        // TODO 需要调用开放平台接口查询
-        saveFileResourceParam.setCataName(null);
-        saveFileResourceParam.setOrgId(null);
-        saveFileResourceParam.setOrgName(null);
-        saveFileResourceParam.setRegionCode(null);
-        // TODO 文档显示传null
-        saveFileResourceParam.setShareType(null);
-        // TODO 根据目录下行表的开放类型open_type
-        saveFileResourceParam.setOpenType(null);
-        // TODO 根据目录下行表的update_cycle
-        saveFileResourceParam.setUpdateCycle(null);
-        // TODO 根据中间程序自动生成
-        saveFileResourceParam.setCreatorId(null);
-        saveFileResourceParam.setCreatorName(null);
+        // 需要调用开放平台接口查询
+        String cataTitle = dubboService.getCatalogInfoById(resourceFile.getCataId());
+        saveFileResourceParam.setCataName(cataTitle);
+        JSONObject regionData = dubboService.getOrganInfoByOrgNum(resourceFile.getCreditCode());
+        saveFileResourceParam.setOrgId(regionData.getString("ID"));
+        saveFileResourceParam.setOrgName(regionData.getString("REGION_NAME"));
+        saveFileResourceParam.setRegionCode(regionData.getString("REGION_CODE"));
+        // 根据目录下行表查询
+        CatalogBasicInfo catalogBasicInfo = catalogBasicInfoDao.selectById(resourceFile.getCataId());
+        saveFileResourceParam.setShareType(Integer.getInteger(catalogBasicInfo.getSharedType()));
+        // 根据目录下行表的开放类型open_type
+        saveFileResourceParam.setOpenType(Integer.getInteger(catalogBasicInfo.getOpenType()));
+        // 根据目录下行表的update_cycle
+        saveFileResourceParam.setUpdateCycle(Integer.getInteger(catalogBasicInfo.getUpdateCycle()));
+        // 根据中间程序自动生成
+        saveFileResourceParam.setCreatorId(SyncDataUtil.CURRENT_ID);
+        saveFileResourceParam.setCreatorName(SyncDataUtil.CURRENT_NAME);
 
         // TODO 先确认resource_file和resource_file_attachinfo表的主外键关系，根据attachinfo里的信息先下载文件，再上传到开放平台
         saveFileResourceParam.setFileName(null);
