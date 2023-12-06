@@ -1,6 +1,7 @@
 package com.inspur.dsp.open.sync.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ public class CatalogCategory implements Serializable {
     /**
      * 目录分类编码
      */
+    @TableId
     @TableField("group_id")
     private String groupId;
 

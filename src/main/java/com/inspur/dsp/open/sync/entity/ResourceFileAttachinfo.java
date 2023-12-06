@@ -1,6 +1,7 @@
 package com.inspur.dsp.open.sync.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.io.Serializable;
@@ -53,6 +54,7 @@ public class ResourceFileAttachinfo implements Serializable {
     /**
      * 文件资源标识
      */
+    @TableId
     @TableField("resourcefileguid")
     private String resourcefileguid;
 

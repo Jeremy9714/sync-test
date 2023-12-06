@@ -1,8 +1,7 @@
-package com.inspur.dsp.open.sync.share;
+package com.inspur.dsp.open.sync.down;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.List;
 
 public class ResourceCheckParam implements Serializable {
     private static final long serialVersionUID = 1L;

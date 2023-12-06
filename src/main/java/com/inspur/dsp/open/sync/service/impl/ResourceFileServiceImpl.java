@@ -7,7 +7,7 @@ import com.inspur.dsp.open.sync.constant.ServiceConstant;
 import com.inspur.dsp.open.sync.dao.ResourceFileDao;
 import com.inspur.dsp.open.sync.entity.ResourceFile;
 import com.inspur.dsp.open.sync.service.ResourceFileService;
-import com.inspur.dsp.open.sync.share.SaveFileResourceParam;
+import com.inspur.dsp.open.sync.down.SaveFileResourceParam;
 import com.inspur.dsp.open.sync.util.DubboService;
 import com.inspur.dsp.open.sync.util.JsonUtil;
 import com.inspur.dsp.open.sync.util.ValidationUtil;

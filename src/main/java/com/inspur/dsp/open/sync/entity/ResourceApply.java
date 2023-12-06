@@ -1,6 +1,7 @@
 package com.inspur.dsp.open.sync.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ public class ResourceApply implements Serializable {
     /**
      * 申请记录主键
      */
+    @TableId
     @TableField("apply_id")
     private String applyId;
 

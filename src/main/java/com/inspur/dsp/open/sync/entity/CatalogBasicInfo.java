@@ -1,6 +1,7 @@
 package com.inspur.dsp.open.sync.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ public class CatalogBasicInfo implements Serializable {
     /**
      * 区共享平台目录主键
      */
+    @TableId
     @TableField("cata_id")
     private String cataId;
 

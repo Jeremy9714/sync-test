@@ -1,4 +1,4 @@
-package com.inspur.dsp.open.sync.share;
+package com.inspur.dsp.open.sync.down;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;

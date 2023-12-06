@@ -10,8 +10,8 @@ import com.inspur.dsp.open.sync.entity.CatalogBasicInfo;
 import com.inspur.dsp.open.sync.entity.CatalogFieldInfo;
 import com.inspur.dsp.open.sync.service.CatalogBasicInfoService;
 import com.inspur.dsp.open.sync.service.CatalogFieldInfoService;
-import com.inspur.dsp.open.sync.share.CataItem;
-import com.inspur.dsp.open.sync.share.CatalogInfo;
+import com.inspur.dsp.open.sync.down.CataItem;
+import com.inspur.dsp.open.sync.down.CatalogInfo;
 import com.inspur.dsp.open.sync.util.DubboService;
 import com.inspur.dsp.open.sync.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Description:
@@ -116,8 +115,7 @@ public class CatalogBasicInfoServiceImpl extends ServiceImpl<CatalogBasicInfoDao
         catalogInfo.setCataType(10);
         catalogInfo.setDescription(catalogBasicInfo.getDescription());
         catalogInfo.setOrgName(catalogBasicInfo.getRegisterOrgName());
-        // TODO 文档不一致
-        catalogInfo.setOpenType(null);
+        catalogInfo.setOpenType(catalogBasicInfo.getOpenCondition());
         catalogInfo.setOpenCondition(catalogBasicInfo.getOpenCondition());
         catalogInfo.setResourceFormat(catalogBasicInfo.getCataType());
         catalogInfo.setUpdateCycle(catalogBasicInfo.getUpdateCycle());
