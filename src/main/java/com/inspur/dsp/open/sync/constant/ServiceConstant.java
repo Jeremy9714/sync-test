@@ -30,7 +30,7 @@ public class ServiceConstant {
     public static String SYNC_RESOURCE_APPLY_INCREMENT_KEY;
 
     @Value("${catalogCategory.key:}")
-    private void setSyncCatalogCategoryKey(String key) {
+    public void setSyncCatalogCategoryKey(String key) {
         SYNC_CATALOG_CATEGORY_KEY = key;
     }
 
