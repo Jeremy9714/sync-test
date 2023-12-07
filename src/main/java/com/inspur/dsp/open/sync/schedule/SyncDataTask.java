@@ -1,6 +1,8 @@
 package com.inspur.dsp.open.sync.schedule;
 
-import com.inspur.dsp.open.sync.service.*;
+import com.inspur.dsp.open.sync.down.catalog.service.CatalogBasicInfoService;
+import com.inspur.dsp.open.sync.down.catalog.service.CatalogCategoryService;
+import com.inspur.dsp.open.sync.down.resource.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

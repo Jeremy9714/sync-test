@@ -1,7 +1,5 @@
 package com.inspur.dsp.open.sync.down.dto;
 
-import com.inspur.dsp.open.sync.down.service.ResourceService;
-
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
