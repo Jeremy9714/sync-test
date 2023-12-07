@@ -1,4 +1,4 @@
-package com.inspur.dsp.open.sync.up;
+package com.inspur.dsp.open.sync.up.bean;
 
 import com.alibaba.fastjson.JSONArray;
 

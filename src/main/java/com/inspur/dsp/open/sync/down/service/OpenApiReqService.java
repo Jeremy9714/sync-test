@@ -1,6 +1,9 @@
-package com.inspur.dsp.open.sync.down;
+package com.inspur.dsp.open.sync.down.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.inspur.dsp.open.sync.down.dto.AddApiResourceParam;
+import com.inspur.dsp.open.sync.down.dto.AddTableResourceParam;
+import com.inspur.dsp.open.sync.down.dto.DeleteTableResourceParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

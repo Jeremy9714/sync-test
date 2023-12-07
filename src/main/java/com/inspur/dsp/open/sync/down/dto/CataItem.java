@@ -1,4 +1,4 @@
-package com.inspur.dsp.open.sync.down;
+package com.inspur.dsp.open.sync.down.dto;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
