@@ -1,7 +1,7 @@
 package com.inspur.dsp.open.sync.schedule;
 
-import com.inspur.dsp.open.sync.down.catalog.service.CatalogBasicInfoService;
-import com.inspur.dsp.open.sync.down.catalog.service.CatalogCategoryService;
+import com.inspur.dsp.open.sync.down.catalog.service.CatalogInfoService;
+import com.inspur.dsp.open.sync.down.catalog.service.CatalogGroupLinkService;
 import com.inspur.dsp.open.sync.down.resource.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +27,10 @@ public class SyncDataTask {
     private static final Logger log = LoggerFactory.getLogger(SyncDataTask.class);
 
     @Autowired
-    private CatalogCategoryService catalogCategoryService;
+    private CatalogGroupLinkService catalogGroupLinkService;
 
     @Autowired
-    private CatalogBasicInfoService catalogBasicinfoService;
+    private CatalogInfoService catalogBasicinfoService;
 
     @Autowired
     private ResourceFileService resourceFileService;
@@ -49,33 +49,11 @@ public class SyncDataTask {
 
     @Async
     @Scheduled(cron = "0 0/5 * * * ?")
-    public void syncTask() {
-        Date startDate = new Date();
-        log.info("--------同步任务开始, 开始时间为 {}", startDate);
-
-        //1.同步目录分类数据
-        log.info("--------开始同步目录分类数据");
-        catalogCategoryService.syncCatalogCategory();
-        log.info("--------结束同步目录分类数据");
-
-        //2.同步目录信息数据
-
-
-        //3.同步资源申请审核过程表
-        log.info("--------开始同步资源申请审核过程表数据");
-        resourceApplyReviewService.syncResourceApplyReview();
-        log.info("--------结束同步资源申请审核过程表数据");
-
-        Date endDate = new Date();
-        long time = endDate.getTime() - startDate.getTime();
-        log.info("--------同步任务开始, 耗时为 {}毫秒", time);
-    }
-    @Async
-    @Scheduled(cron = "0 0/5 * * * ?")
-    public void syncCatalogBasicInfo() {
+    public void syncCatalogData() {
         log.info("--------开始同步----目录信息下行表");
+        long startTime = System.currentTimeMillis();
         catalogBasicinfoService.syncCatalogBasicInfo();
-        log.info("--------结束同步----目录信息下行表");
+        log.info("--------结束同步----目录信息下行表,耗时为 {}毫秒", System.currentTimeMillis() - startTime);
     }
 
     @Async

@@ -3,11 +3,11 @@ package com.inspur.dsp.open.sync.down.resource.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.inspur.dsp.open.sync.down.catalog.dao.CatalogBasicInfoDao;
+import com.inspur.dsp.open.sync.down.catalog.dao.CatalogInfoDao;
 import com.inspur.dsp.open.sync.down.resource.dao.ResourceFileDao;
 import com.inspur.dsp.open.sync.down.catalog.bean.CatalogBasicInfo;
 import com.inspur.dsp.open.sync.down.resource.bean.ResourceFile;
-import com.inspur.dsp.open.sync.down.dto.SaveFileResourceParam;
+import com.inspur.dsp.open.sync.down.resource.dto.SaveFileResourceParam;
 import com.inspur.dsp.open.sync.down.resource.service.ResourceFileService;
 import com.inspur.dsp.open.sync.util.*;
 import org.apache.commons.lang.StringUtils;
@@ -32,7 +32,7 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
     private ResourceFileDao resourceFileDao;
 
     @Autowired
-    private CatalogBasicInfoDao catalogBasicInfoDao;
+    private CatalogInfoDao catalogInfoDao;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -115,7 +115,7 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
         saveFileResourceParam.setOrgName(regionData.getString("REGION_NAME"));
         saveFileResourceParam.setRegionCode(regionData.getString("REGION_CODE"));
         // 根据目录下行表查询
-        CatalogBasicInfo catalogBasicInfo = catalogBasicInfoDao.selectById(resourceFile.getCataId());
+        CatalogBasicInfo catalogBasicInfo = catalogInfoDao.selectById(resourceFile.getCataId());
         saveFileResourceParam.setShareType(Integer.getInteger(catalogBasicInfo.getSharedType()));
         // 根据目录下行表的开放类型open_type
         saveFileResourceParam.setOpenType(Integer.getInteger(catalogBasicInfo.getOpenType()));

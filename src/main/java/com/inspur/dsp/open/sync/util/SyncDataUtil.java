@@ -21,4 +21,10 @@ public class SyncDataUtil {
         return DATE_FORMAT.format(new Date());
     }
 
+    public static String getUUID() {
+        String s = UUID.randomUUID().toString();
+        s = s.replace("-", "");
+        return s;
+    }
+
 }

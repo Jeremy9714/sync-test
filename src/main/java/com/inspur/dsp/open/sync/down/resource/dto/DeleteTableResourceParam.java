@@ -1,4 +1,4 @@
-package com.inspur.dsp.open.sync.down.dto;
+package com.inspur.dsp.open.sync.down.resource.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

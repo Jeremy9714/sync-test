@@ -1,7 +1,7 @@
 package com.inspur.dsp.open.sync.down.catalog.dao;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.inspur.dsp.open.sync.down.catalog.bean.CatalogCategory;
+import com.inspur.dsp.open.sync.down.catalog.bean.CatalogGroupLink;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * @Version: 1.0
  */
 @Repository
-public interface CatalogCategoryDao extends BaseMapper<CatalogCategory> {
+public interface CatalogGroupLinkDao extends BaseMapper<CatalogGroupLink> {
 
     String getLatestOperationDate();
 }

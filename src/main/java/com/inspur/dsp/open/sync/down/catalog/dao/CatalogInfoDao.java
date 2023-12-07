@@ -1,7 +1,7 @@
 package com.inspur.dsp.open.sync.down.catalog.dao;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.inspur.dsp.open.sync.down.catalog.bean.CatalogBasicInfo;
+import com.inspur.dsp.open.sync.down.catalog.bean.CatalogInfo;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * @Version: 1.0
  */
 @Repository
-public interface CatalogBasicInfoDao extends BaseMapper<CatalogBasicInfo> {
+public interface CatalogInfoDao extends BaseMapper<CatalogInfo> {
 
     String getLatestOperationDate();
 }
