@@ -3,7 +3,6 @@ package com.inspur.dsp.dao;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.inspur.dsp.open.sync.DataSyncApplication;
 import com.inspur.dsp.open.sync.down.resource.dao.ResourceTableDao;
-import com.inspur.dsp.open.sync.down.resource.bean.ResourceTable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

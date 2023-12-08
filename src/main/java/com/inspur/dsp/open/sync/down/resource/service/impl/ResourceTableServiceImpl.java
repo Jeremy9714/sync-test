@@ -3,12 +3,12 @@ package com.inspur.dsp.open.sync.down.resource.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.inspur.dsp.open.sync.down.resource.dao.ResourceTableDao;
-import com.inspur.dsp.open.sync.down.resource.dto.AddTableResourceParam;
-import com.inspur.dsp.open.sync.down.resource.dto.DeleteTableResourceParam;
-import com.inspur.dsp.open.sync.down.resource.service.ResourceTableService;
-import com.inspur.dsp.open.sync.down.service.OpenApiReqService;
 import com.inspur.dsp.open.sync.down.resource.bean.ResourceTable;
+import com.inspur.dsp.open.sync.down.resource.dao.ResourceTableDao;
+import com.inspur.dsp.open.sync.down.resource.dto.ResourceTableDto;
+import com.inspur.dsp.open.sync.down.resource.service.ResourceTableService;
+import com.inspur.dsp.open.sync.down.resource.api.OpenApiService;
+import com.inspur.dsp.open.sync.util.DSPBeanUtils;
 import com.inspur.dsp.open.sync.util.ServiceConstant;
 import com.inspur.dsp.open.sync.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
@@ -21,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -36,7 +38,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
     private RedisTemplate<String, String> redisTemplate;
 
     @Autowired
-    private OpenApiReqService openApiReqService;
+    private OpenApiService openApiService;
 
     @Transactional
     @Override
@@ -59,30 +61,30 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
                     log.info("下行库无新增库表资源下行表数据，不需要同步");
                     return true;
                 }
-                wrapper.gt("operate_date", lastSyncDate)
-                        .orderBy("operate_date")
-                        .last("limit 0,10");
+                wrapper.gt("operate_date", lastSyncDate);
             }
 
+            wrapper.orderBy("operate_date");
             List<ResourceTable> resultList = this.selectList(wrapper);
             log.debug("查询结果: {}", JSONObject.toJSONString(resultList));
 
-            for(ResourceTable resourceTable : resultList){
+            for (ResourceTable resourceTable : resultList) {
                 String operateType = resourceTable.getOperateType();
-                switch (operateType){
+                switch (operateType) {
                     case "I":
-                        openApiReqService.addTableResource(dealAddTableParams(resourceTable));
+                        openApiService.insertOrUpdateResourceTable(transformTableToMap(resourceTable));
                         break;
                     case "U":
-                        openApiReqService.addTableResource(dealAddTableParams(resourceTable));
+                        openApiService.insertOrUpdateResourceTable(transformTableToMap(resourceTable));
                         break;
                     case "D":
-                        openApiReqService.deleteTableResource(dealDeleteTableParams(resourceTable));
+                        openApiService.deleteResourceTable(transformTableToMapDelete(resourceTable));
                         break;
                     default:
                         throw new RuntimeException("库表资源，无此操作类型");
                 }
-                redisTemplate.opsForValue().set(ServiceConstant.SYNC_RESOURCE_TABLE_KEY, latestOperationDate);
+                String currentOperateDate = sdf.format(resourceTable.getOperateDate());
+                redisTemplate.opsForValue().set(ServiceConstant.SYNC_RESOURCE_TABLE_KEY, currentOperateDate);
             }
 
             return true;
@@ -95,48 +97,41 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
 
     /**
      * 组装保存库表资源的入参
+     *
      * @param resourceTable
      * @return
      */
-    private AddTableResourceParam dealAddTableParams(ResourceTable resourceTable){
-        AddTableResourceParam addTableResourceParam = new AddTableResourceParam();
+    private Map<String, Object> transformTableToMap(ResourceTable resourceTable) {
+        ResourceTableDto resourceTableDto = new ResourceTableDto();
         // TODO 等待数据源信息提供
-        addTableResourceParam.setDataSourceIdCheck(null);
-        addTableResourceParam.setItemId(new String[]{resourceTable.getResourceId()});
-        addTableResourceParam.setCataId(resourceTable.getCataId());
-        String json = resourceTable.getTablejson();
-        JSONObject jsonObject = (JSONObject) JSONObject.parse(json);
-        String tableName = jsonObject.getString("table_sqlname");
-        String tableDesc = jsonObject.getString("table_name");
-        addTableResourceParam.setDataTableName(tableName);
-        addTableResourceParam.setTableDesc(tableDesc);
-
-        if(ValidationUtil.validate(addTableResourceParam)){
-            return addTableResourceParam;
-        }else{
-            log.error("保存库表资源，请求参数存在必填项为空，需检查参数:{}", addTableResourceParam.toString());
+        DSPBeanUtils.copyProperties(resourceTable, resourceTableDto);
+        if (!ValidationUtil.validate(resourceTableDto)) {
+            log.error("保存库表资源，请求参数存在必填项为空，需检查参数:{}", resourceTableDto.toString());
             throw new RuntimeException("请求参数不合规");
         }
+
+        Map<String, Object> tableMap = DSPBeanUtils.beanToMap(resourceTableDto);
+        return tableMap;
     }
 
     /**
      * 组装删除库表资源的入参
+     *
      * @param resourceTable
      * @return
      */
-    private DeleteTableResourceParam dealDeleteTableParams(ResourceTable resourceTable){
-        DeleteTableResourceParam deleteTableResourceParam = new DeleteTableResourceParam();
+    private Map<String, Object> transformTableToMapDelete(ResourceTable resourceTable) {
+        Map<String, Object> tableMap = new HashMap<>();
         // TODO 等待数据源信息提供
-        deleteTableResourceParam.setDatasourceId(null);
-        deleteTableResourceParam.setItemId(new String[]{resourceTable.getResourceId()});
-        deleteTableResourceParam.setCataId(resourceTable.getCataId());
-
-        if(ValidationUtil.validate(deleteTableResourceParam)){
-            return deleteTableResourceParam;
-        }else{
-            log.error("删除库表资源，请求参数存在必填项为空，需检查参数:{}", deleteTableResourceParam.toString());
+        if (StringUtils.isBlank(resourceTable.getDataSourceIdCheck()) || resourceTable.getItemId().length == 0 || StringUtils.isBlank(resourceTable.getCataId())) {
+            log.error("删除库表资源，请求参数存在必填项为空，需检查参数:{}", resourceTable.toString());
             throw new RuntimeException("请求参数不合规");
         }
+        tableMap.put("datasource_id", resourceTable.getDataSourceIdCheck());
+        tableMap.put("table_id", resourceTable.getItemId());
+        tableMap.put("cataid", resourceTable.getCataId());
+
+        return tableMap;
     }
 
 }

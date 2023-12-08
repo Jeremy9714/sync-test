@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.open.sync.down.catalog.dao.CatalogInfoDao;
-import com.inspur.dsp.open.sync.down.resource.dao.ResourceFileDao;
-import com.inspur.dsp.open.sync.down.catalog.bean.CatalogBasicInfo;
+import com.inspur.dsp.open.sync.down.resource.bean.ResourceAttachment;
 import com.inspur.dsp.open.sync.down.resource.bean.ResourceFile;
-import com.inspur.dsp.open.sync.down.resource.dto.SaveFileResourceParam;
+import com.inspur.dsp.open.sync.down.resource.dao.ResourceAttachmentDao;
+import com.inspur.dsp.open.sync.down.resource.dao.ResourceFileDao;
+import com.inspur.dsp.open.sync.down.resource.dto.ResourceFileDto;
 import com.inspur.dsp.open.sync.down.resource.service.ResourceFileService;
 import com.inspur.dsp.open.sync.util.*;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +34,13 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
     private ResourceFileDao resourceFileDao;
 
     @Autowired
-    private CatalogInfoDao catalogInfoDao;
+    private ResourceAttachmentDao resourceAttachmentDao;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     @Autowired
     private DubboService dubboService;
-
 
     @Transactional
     @Override
@@ -62,30 +63,30 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
                     log.info("下行库无新增文件资源下行表数据，不需要同步");
                     return true;
                 }
-                wrapper.gt("operate_date", lastSyncDate)
-                        .orderBy("operate_date")
-                        .last("limit 0,10");
-            }
+                wrapper.gt("operate_date", lastSyncDate);
 
+            }
+            wrapper.orderBy("operate_date").last("limit 0,100");
             List<ResourceFile> resultList = this.selectList(wrapper);
             log.debug("查询结果: {}", JSONObject.toJSONString(resultList));
 
-            for(ResourceFile resourceFile : resultList){
+            for (ResourceFile resourceFile : resultList) {
                 String operateType = resourceFile.getOperateType();
-                switch (operateType){
+                switch (operateType) {
                     case "I":
-                        saveFileResource(dealSaveFileParams(resourceFile));
+                        saveResourceFile(transformFileToMap(resourceFile));
                         break;
                     case "U":
-                        saveFileResource(dealSaveFileParams(resourceFile));
+                        saveResourceFile(transformFileToMap(resourceFile));
                         break;
                     case "D":
-                        deleteResource(resourceFile.getResourceId());
+                        deleteResourceFile(resourceFile.getId());
                         break;
                     default:
                         throw new RuntimeException("库表资源，无此操作类型");
                 }
-                redisTemplate.opsForValue().set(ServiceConstant.SYNC_RESOURCE_FILE_KEY, latestOperationDate);
+                String currentOperateDate = sdf.format(resourceFile.getOperateDate());
+                redisTemplate.opsForValue().set(ServiceConstant.SYNC_RESOURCE_FILE_KEY, currentOperateDate);
             }
 
             return true;
@@ -98,60 +99,51 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
 
     /**
      * 组装，保存文件资源的入参
+     *
      * @param resourceFile
      * @return
      */
-    private SaveFileResourceParam dealSaveFileParams(ResourceFile resourceFile){
-        SaveFileResourceParam saveFileResourceParam = new SaveFileResourceParam();
-        saveFileResourceParam.setId(resourceFile.getResourceId());
-        saveFileResourceParam.setResName(resourceFile.getResourceName());
-        saveFileResourceParam.setResDesc(resourceFile.getRemark());
-        saveFileResourceParam.setCataId(resourceFile.getCataId());
-        // 需要调用开放平台接口查询
-        String cataTitle = dubboService.getCatalogInfoById(resourceFile.getCataId());
-        saveFileResourceParam.setCataName(cataTitle);
-        JSONObject regionData = dubboService.getOrganInfoByOrgNum(resourceFile.getCreditCode());
-        saveFileResourceParam.setOrgId(regionData.getString("ID"));
-        saveFileResourceParam.setOrgName(regionData.getString("REGION_NAME"));
-        saveFileResourceParam.setRegionCode(regionData.getString("REGION_CODE"));
-        // 根据目录下行表查询
-        CatalogBasicInfo catalogBasicInfo = catalogInfoDao.selectById(resourceFile.getCataId());
-        saveFileResourceParam.setShareType(Integer.getInteger(catalogBasicInfo.getSharedType()));
-        // 根据目录下行表的开放类型open_type
-        saveFileResourceParam.setOpenType(Integer.getInteger(catalogBasicInfo.getOpenType()));
-        // 根据目录下行表的update_cycle
-        saveFileResourceParam.setUpdateCycle(Integer.getInteger(catalogBasicInfo.getUpdateCycle()));
-        // 根据中间程序自动生成
-        saveFileResourceParam.setCreatorId(SyncDataUtil.CURRENT_ID);
-        saveFileResourceParam.setCreatorName(SyncDataUtil.CURRENT_NAME);
+    private Map<String, Object> transformFileToMap(ResourceFile resourceFile) {
+        ResourceFileDto resourceFileDto = new ResourceFileDto();
+        DSPBeanUtils.copyProperties(resourceFile, resourceFileDto);
 
+        // 先确认resource_file和resource_file_attachinfo表的主外键关系，根据attachinfo里的信息先下载文件，再上传到开放平台
+        ResourceAttachment resourceAttachment = resourceAttachmentDao.selectById(resourceFile.getId());
+        // TODO 第三方附件下载
+        String fileContent = "";
+        if(fileContent == null){
+            log.error("下载文件资源失败.");
+            throw new RuntimeException("下载文件资源失败");
+        }
+        byte[] bytes = Base64.decodeBase64(fileContent.getBytes());
         // TODO 先确认resource_file和resource_file_attachinfo表的主外键关系，根据attachinfo里的信息先下载文件，再上传到开放平台
-        saveFileResourceParam.setFileName(null);
-        saveFileResourceParam.setFileSize(null);
-        saveFileResourceParam.setFilePath(null);
-        saveFileResourceParam.setFileFormat(null);
+        resourceFileDto.setFileName(null);
+        resourceFileDto.setFileSize(null);
+        resourceFileDto.setFilePath(null);
+        resourceFileDto.setFileFormat(null);
 
-        if(ValidationUtil.validate(saveFileResourceParam)){
-            return saveFileResourceParam;
-        }else{
-            log.error("保存文件资源，请求参数存在必填项为空，需检查参数:{}", saveFileResourceParam.toString());
+        if (!ValidationUtil.validate(resourceFileDto)) {
+            log.error("保存文件资源，请求参数存在必填项为空，需检查参数:{}", resourceFileDto.toString());
             throw new RuntimeException("请求参数不合规");
         }
+
+        Map<String, Object> fileMap = DSPBeanUtils.beanToMap(resourceFileDto);
+        return fileMap;
     }
 
     /**
      * 调用，保存文件资源
-     * @param saveFileResourceParam
+     *
+     * @param fileMap
      * @return
      */
-    private void saveFileResource(SaveFileResourceParam saveFileResourceParam){
-        Map map = JsonUtil.obj2pojo(saveFileResourceParam, Map.class);
-        Map<String, Object> result = dubboService.saveFileResource(map);
+    private void saveResourceFile(Map<String, Object> fileMap) {
+        Map<String, Object> result = dubboService.saveFileResource(fileMap);
         String code = (String) result.get("code");
-        if(code.equals("200")){
+        if (code.equals("200")) {
             String data = (String) result.get("data");
             log.info("保存文件资源成功。");
-        }else{
+        } else {
             String error = (String) result.get("error");
             log.error("保存文件资源，接口调用失败。错误说明:{}", error);
             throw new RuntimeException("接口调用失败");
@@ -160,15 +152,16 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
 
     /**
      * 调用，删除文件资源
+     *
      * @param id
      */
-    private void deleteResource(String id){
+    private void deleteResourceFile(String id) {
         Map<String, Object> result = dubboService.deleteResource(id);
         String code = (String) result.get("code");
-        if(code.equals("200")){
+        if (code.equals("200")) {
             log.info("删除文件资源成功");
             // TODO 资源下架后，查询一次目录，如果该目录下没有资源，就把目录也下架
-        }else{
+        } else {
             String error = (String) result.get("error");
             log.error("删除文件资源，接口调用失败。错误说明:{}", error);
             throw new RuntimeException("接口调用失败");

@@ -50,7 +50,7 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
     public boolean syncCatalogBasicInfo() {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_CATALOG_BASIC_INFO_KEY);
+            String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_CATALOG_INFO_KEY);
             String latestOperationDate = catalogInfoDao.getLatestOperationDate();
             // 无数据
             if (StringUtils.isBlank(latestOperationDate)) {
@@ -66,11 +66,10 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
                     log.info("下行库无新增目录信息数据，不需要同步");
                     return true;
                 }
-                wrapper.gt("operate_date", lastSyncDate)
-                        .orderBy("operate_date")
-                        .last("limit 10");
+                wrapper.gt("operate_date", lastSyncDate);
             }
 
+            wrapper.orderBy("operate_date").last("limit 100");
             List<CatalogInfo> resultList = this.selectList(wrapper);
             log.debug("查询结果: {}", JSONObject.toJSONString(resultList));
 
@@ -78,10 +77,10 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
                 String operateType = catalogInfo.getOperateType();
                 switch (operateType) {
                     case "I":
-                        insertOrUpdateCatalogInfo(dealUpdateCatalogInfoParam(catalogInfo));
+                        insertOrUpdateCatalogInfo(transformCatalogInfoToMap(catalogInfo));
                         break;
                     case "U":
-                        insertOrUpdateCatalogInfo(dealUpdateCatalogInfoParam(catalogInfo));
+                        insertOrUpdateCatalogInfo(transformCatalogInfoToMap(catalogInfo));
                         break;
                     case "D":
                         deleteCatalog(catalogInfo.getCataId());
@@ -89,10 +88,11 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
                     default:
                         throw new RuntimeException("目录信息，无此操作类型");
                 }
-                String currentOperateDate = sdf.format(catalogInfo.getOperateTime());
-                redisTemplate.opsForValue().set(ServiceConstant.SYNC_CATALOG_BASIC_INFO_KEY, currentOperateDate);
+                String currentOperateDate = sdf.format(catalogInfo.getOperateDate());
+                redisTemplate.opsForValue().set(ServiceConstant.SYNC_CATALOG_INFO_KEY, currentOperateDate);
             }
 
+            return true;
         } catch (Exception e) {
             log.error("--------同步异常----目录信息下行表", e);
             e.printStackTrace();
@@ -100,7 +100,7 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
         return false;
     }
 
-    private Map<String, Object> dealUpdateCatalogInfoParam(CatalogInfo catalogInfo) {
+    private Map<String, Object> transformCatalogInfoToMap(CatalogInfo catalogInfo) {
         Map<String, Object> catalogMap = new HashMap<>();
         EntityWrapper<CatalogItem> wrapper = new EntityWrapper<>();
         wrapper.eq("cata_id", catalogInfo.getCataId());

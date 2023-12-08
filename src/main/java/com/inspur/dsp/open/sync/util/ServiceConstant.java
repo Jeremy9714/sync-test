@@ -11,37 +11,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceConstant {
 
-    public static String SYNC_CATALOG_CATEGORY_KEY;
+    public static String SYNC_CATALOG_GROUP_LINK_KEY;
 
-    public static String SYNC_CATALOG_BASIC_INFO_KEY;
-
-    public static String SYNC_CATALOG_FIELD_INFO_KEY;
+    public static String SYNC_CATALOG_INFO_KEY;
 
     public static String SYNC_RESOURCE_FILE_KEY;
 
-    public static String SYNC_RESOURCE_OPERATION_SERVICE_KEY;
-
     public static String SYNC_RESOURCE_TABLE_KEY;
 
-    public static String SYNC_RESOURCE_APPLY_REVIEW_KEY;
+    public static String SYNC_RESOURCE_DATASOURCE_KEY;
 
-    public static String SYNC_RESOURCE_APPLY_KEY;
 
-    public static String SYNC_RESOURCE_APPLY_INCREMENT_KEY;
-
-    @Value("${catalogCategory.key:}")
-    public void setSyncCatalogCategoryKey(String key) {
-        SYNC_CATALOG_CATEGORY_KEY = key;
+    @Value("${catalogGroupLink.key:}")
+    public void setSyncCatalogGroupLinkKey(String syncCatalogGroupLinkKey) {
+        SYNC_CATALOG_GROUP_LINK_KEY = syncCatalogGroupLinkKey;
     }
 
-    @Value("${catalogBasicInfo.key:}")
-    private void setSyncCatalogBasicInfoKey(String key) {
-        SYNC_CATALOG_BASIC_INFO_KEY = key;
-    }
-
-    @Value("${catalogFieldInfo.key:}")
-    private void setSyncCatalogFieldInfoKey(String key) {
-        SYNC_CATALOG_FIELD_INFO_KEY = key;
+    @Value("${catalogInfo.key:}")
+    public void setSyncCatalogInfoKey(String syncCatalogInfoKey) {
+        SYNC_CATALOG_INFO_KEY = syncCatalogInfoKey;
     }
 
     @Value("${resourceFile.key:}")
@@ -49,28 +37,14 @@ public class ServiceConstant {
         SYNC_RESOURCE_FILE_KEY = syncResourceFileKey;
     }
 
-    @Value("${resourceOperationservice.key:}")
-    public void setSyncResourceOperationServiceKey(String syncResourceOperationServiceKey) {
-        SYNC_RESOURCE_OPERATION_SERVICE_KEY = syncResourceOperationServiceKey;
-    }
-
     @Value("${resourceTable.key:}")
     public void setSyncResourceTableKey(String syncResourceTableKey) {
         SYNC_RESOURCE_TABLE_KEY = syncResourceTableKey;
     }
 
-    @Value("${resourceApplyReview.key:}")
-    public void setSyncResourceApplyReviewKey(String syncResourceApplyReviewKey) {
-        SYNC_RESOURCE_APPLY_REVIEW_KEY = syncResourceApplyReviewKey;
+    @Value("${resourceTable.key:}")
+    public void setSyncResourceDatasourceKey(String syncResourceDatasourceKey) {
+        SYNC_RESOURCE_DATASOURCE_KEY = syncResourceDatasourceKey;
     }
 
-    @Value("${resourceApply.key:}")
-    public void setSyncResourceApplyKey(String syncResourceApplyKey) {
-        SYNC_RESOURCE_APPLY_KEY = syncResourceApplyKey;
-    }
-
-    @Value("${resourceApplyIncrement.key:}")
-    public void setSyncResourceApplyIncrementKey(String syncResourceApplyIncrementKey) {
-        SYNC_RESOURCE_APPLY_INCREMENT_KEY = syncResourceApplyIncrementKey;
-    }
 }

@@ -244,7 +244,7 @@ public class CatalogInfo implements Serializable {
      * 同步时间戳
      */
     @TableField("operate_date")
-    private Date operateTime;
+    private Date operateDate;
 
     /**
      * 新增：I
