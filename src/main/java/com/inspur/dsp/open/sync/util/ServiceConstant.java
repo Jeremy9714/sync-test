@@ -42,7 +42,7 @@ public class ServiceConstant {
         SYNC_RESOURCE_TABLE_KEY = syncResourceTableKey;
     }
 
-    @Value("${resourceTable.key:}")
+    @Value("${resourceDatasource.key:}")
     public void setSyncResourceDatasourceKey(String syncResourceDatasourceKey) {
         SYNC_RESOURCE_DATASOURCE_KEY = syncResourceDatasourceKey;
     }
