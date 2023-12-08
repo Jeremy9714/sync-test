@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.open.common.Result;
+import com.inspur.dsp.open.sync.down.catalog.bean.CatalogGroupLink;
 import com.inspur.dsp.open.sync.down.catalog.bean.CatalogInfo;
 import com.inspur.dsp.open.sync.down.catalog.dao.CatalogInfoDao;
 import com.inspur.dsp.open.sync.down.catalog.bean.CatalogItem;
+import com.inspur.dsp.open.sync.down.catalog.service.CatalogGroupLinkService;
 import com.inspur.dsp.open.sync.down.catalog.service.CatalogInfoService;
 import com.inspur.dsp.open.sync.down.catalog.service.CatalogItemService;
 import com.inspur.dsp.open.sync.down.catalog.dto.CatalogItemDto;
@@ -38,6 +40,9 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
 
     @Autowired
     private CatalogItemService catalogItemService;
+
+    @Autowired
+    private CatalogGroupLinkService catalogGroupLinkService;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -147,7 +152,7 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
         // 中间程序生成
         cataGroup.put("linkId", SyncDataUtil.getUUID());
         cataGroup.put("cataId", catalogInfoDto.getCataId());
-        catalogMap.put("cataGroupList", cataGroup);
+        catalogMap.put("cataGroupList", Arrays.asList(cataGroup));
 
         return catalogMap;
     }
