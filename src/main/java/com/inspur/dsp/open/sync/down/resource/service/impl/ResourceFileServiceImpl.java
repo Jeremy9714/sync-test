@@ -3,7 +3,7 @@ package com.inspur.dsp.open.sync.down.resource.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.inspur.dsp.open.sync.down.catalog.dao.CatalogInfoDao;
+import com.inspur.dsp.common.file.FileStoreFactory;
 import com.inspur.dsp.open.sync.down.resource.bean.ResourceAttachment;
 import com.inspur.dsp.open.sync.down.resource.bean.ResourceFile;
 import com.inspur.dsp.open.sync.down.resource.dao.ResourceAttachmentDao;
@@ -11,6 +11,7 @@ import com.inspur.dsp.open.sync.down.resource.dao.ResourceFileDao;
 import com.inspur.dsp.open.sync.down.resource.dto.ResourceFileDto;
 import com.inspur.dsp.open.sync.down.resource.service.ResourceFileService;
 import com.inspur.dsp.open.sync.util.*;
+import com.inspur.dsp.open.upload.RCBasedFileStore;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +43,9 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
 
     @Autowired
     private DubboService dubboService;
+
+    @Autowired
+    private FileStoreFactory fileStoreFactory;
 
     @Transactional
     @Override
@@ -103,24 +108,18 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
      * @param resourceFile
      * @return
      */
-    private Map<String, Object> transformFileToMap(ResourceFile resourceFile) {
+    private Map<String, Object> transformFileToMap(ResourceFile resourceFile) throws RuntimeException {
         ResourceFileDto resourceFileDto = new ResourceFileDto();
         DSPBeanUtils.copyProperties(resourceFile, resourceFileDto);
 
         // 先确认resource_file和resource_file_attachinfo表的主外键关系，根据attachinfo里的信息先下载文件，再上传到开放平台
         ResourceAttachment resourceAttachment = resourceAttachmentDao.selectById(resourceFile.getId());
-        // TODO 第三方附件下载
-        String fileContent = "";
-        if(fileContent == null){
-            log.error("下载文件资源失败.");
-            throw new RuntimeException("下载文件资源失败");
-        }
-        byte[] bytes = Base64.decodeBase64(fileContent.getBytes());
-        // TODO 先确认resource_file和resource_file_attachinfo表的主外键关系，根据attachinfo里的信息先下载文件，再上传到开放平台
-        resourceFileDto.setFileName(null);
-        resourceFileDto.setFileSize(null);
-        resourceFileDto.setFilePath(null);
-        resourceFileDto.setFileFormat(null);
+        resourceFileDto.setFileName(resourceAttachment.getAttachFilename());
+        resourceFileDto.setFileSize(resourceAttachment.getAttachLength());
+        resourceFileDto.setFileFormat(resourceAttachment.getFileType());
+
+        String docId = uploadResourceAttachment(resourceAttachment);
+        resourceFileDto.setFilePath(docId);
 
         if (!ValidationUtil.validate(resourceFileDto)) {
             log.error("保存文件资源，请求参数存在必填项为空，需检查参数:{}", resourceFileDto.toString());
@@ -168,4 +167,24 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
         }
     }
 
+    private String uploadResourceAttachment(ResourceAttachment resourceAttachment) {
+        RCBasedFileStore fileStore = (RCBasedFileStore) fileStoreFactory.getFileStore();
+        // TODO 第三方文件下载
+        String fileContent = "";
+        if (fileContent == null) {
+            log.error("下载第三方文件资源失败！");
+            throw new RuntimeException("下载第三方文件资源失败！");
+        }
+        byte[] bytes = Base64.decodeBase64(fileContent.getBytes());
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);) {
+            String docId = fileStore.putFile(resourceAttachment.getAttachFilename(), bis, null);
+            return docId;
+        } catch (Exception e) {
+            log.error("文件上传开放平台失败！");
+            throw new RuntimeException(e);
+        }
+    }
+
 }
+
+
