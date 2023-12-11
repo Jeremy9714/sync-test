@@ -34,8 +34,8 @@ public class SyncDataTask {
     @Autowired
     private ResourceTableService resourceTableService;
 
-    @Autowired
-    private ResourceDatasourceService resourceDatasourceService;
+//    @Autowired
+//    private ResourceDatasourceService resourceDatasourceService;
 
     @Async
     @Scheduled(cron = "0 0/10 * * * ?")

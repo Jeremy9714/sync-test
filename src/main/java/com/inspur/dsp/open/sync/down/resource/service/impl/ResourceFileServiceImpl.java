@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.common.file.FileStoreFactory;
 import com.inspur.dsp.open.sync.down.resource.bean.ResourceFile;
-import com.inspur.dsp.open.sync.down.resource.dao.ResourceAttachmentDao;
 import com.inspur.dsp.open.sync.down.resource.dao.ResourceFileDao;
 import com.inspur.dsp.open.sync.down.resource.dto.ResourceFileDto;
 import com.inspur.dsp.open.sync.down.resource.service.ResourceFileService;
@@ -33,9 +32,6 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
 
     @Autowired
     private ResourceFileDao resourceFileDao;
-
-    @Autowired
-    private ResourceAttachmentDao resourceAttachmentDao;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
