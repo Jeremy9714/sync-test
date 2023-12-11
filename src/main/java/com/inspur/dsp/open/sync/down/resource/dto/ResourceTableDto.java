@@ -31,7 +31,7 @@ public class ResourceTableDto implements Serializable {
      * 目录id
      */
     @NotNull(message = "目录id不能为空！")
-    private String cataId;
+    private String cataid;
 
     /**
      * 来自于数据文件导入 ，1：是

@@ -81,8 +81,6 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
                 String operateType = catalogInfo.getOperateType();
                 switch (operateType) {
                     case "I":
-                        insertOrUpdateCatalogInfo(transformCatalogInfoToMap(catalogInfo));
-                        break;
                     case "U":
                         insertOrUpdateCatalogInfo(transformCatalogInfoToMap(catalogInfo));
                         break;

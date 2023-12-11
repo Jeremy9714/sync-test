@@ -23,7 +23,7 @@ import java.util.*;
  *
  * @author zhfeng
  */
-@Component
+@Component("newRcBasedFileStore")
 public class RCBasedFileStore implements IFileStore {
 
     private Logger logger = LoggerFactory.getLogger(RCBasedFileStore.class);

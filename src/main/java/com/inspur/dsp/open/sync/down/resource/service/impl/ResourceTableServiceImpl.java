@@ -72,8 +72,6 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
                 String operateType = resourceTable.getOperateType();
                 switch (operateType) {
                     case "I":
-                        openApiService.insertOrUpdateResourceTable(transformTableToMap(resourceTable));
-                        break;
                     case "U":
                         openApiService.insertOrUpdateResourceTable(transformTableToMap(resourceTable));
                         break;
@@ -123,13 +121,13 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
     private Map<String, Object> transformTableToMapDelete(ResourceTable resourceTable) {
         Map<String, Object> tableMap = new HashMap<>();
         // TODO 等待数据源信息提供
-        if (StringUtils.isBlank(resourceTable.getDataSourceIdCheck()) || resourceTable.getItemId().length == 0 || StringUtils.isBlank(resourceTable.getCataId())) {
+        if (StringUtils.isBlank(resourceTable.getDataSourceIdCheck()) || StringUtils.isNotBlank(resourceTable.getItemId()) || StringUtils.isBlank(resourceTable.getCataid())) {
             log.error("删除库表资源，请求参数存在必填项为空，需检查参数:{}", resourceTable.toString());
             throw new RuntimeException("请求参数不合规");
         }
         tableMap.put("datasource_id", resourceTable.getDataSourceIdCheck());
-        tableMap.put("table_id", resourceTable.getItemId());
-        tableMap.put("cataid", resourceTable.getCataId());
+        tableMap.put("table_id", new String[]{resourceTable.getItemId()});
+        tableMap.put("cataid", resourceTable.getCataid());
 
         return tableMap;
     }

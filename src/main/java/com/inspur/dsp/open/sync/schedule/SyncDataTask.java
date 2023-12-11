@@ -35,6 +35,9 @@ public class SyncDataTask {
     @Autowired
     private ResourceTableService resourceTableService;
 
+//    @Autowired
+//    private ResourceDatasourceService resourceDatasourceService;
+
     @Value("${catalog.schedule.enable:1}")
     private String catalogScheduleFlag;
 
@@ -60,7 +63,7 @@ public class SyncDataTask {
     }
 
     @Async
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void syncResourceFile() {
         if ("0".equals(resourceFileScheduleFlag)){
             return;

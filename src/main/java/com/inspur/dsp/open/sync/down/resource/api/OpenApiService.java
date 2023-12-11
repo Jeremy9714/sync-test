@@ -22,9 +22,6 @@ public class OpenApiService {
     @Value("${open.url}")
     private String openUrl;
 
-    @Value("${rcservice.url}")
-    private String rcUrl;
-
     @Autowired
     private RestTemplate restTemplate;
 

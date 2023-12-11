@@ -27,13 +27,13 @@ public class ResourceTable implements Serializable {
      * 库表id
      */
     @TableField("item_id")
-    private String[] itemId;
+    private String itemId;
 
     /**
      * 目录id
      */
     @TableField("cata_id")
-    private String cataId;
+    private String cataid;
 
 //    /**
 //     * 来自于数据文件导入 ，1：是

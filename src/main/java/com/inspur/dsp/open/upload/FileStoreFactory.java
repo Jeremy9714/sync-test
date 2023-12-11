@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @author zhfeng
  *
  */
-@Component
+@Component("newFileStoreFactory")
 public class FileStoreFactory {
 	
 	private IFileStore fileStoreInstance;
