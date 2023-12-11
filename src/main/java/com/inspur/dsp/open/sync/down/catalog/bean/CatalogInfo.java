@@ -96,11 +96,11 @@ public class CatalogInfo implements Serializable {
     @TableField("open_type")
     private String openType;
 
-//    /**
-//     * 开放条件，开放类型为有条件开放时填写
-//     */
-//    @TableField("open_condition")
-//    private String openCondition;
+    /**
+     * 开放条件，开放类型为有条件开放时填写
+     */
+    @TableField("open_condition")
+    private String openCondition;
 
 //    /**
 //     * 资源格式，41-mysql44-GBase等
@@ -120,11 +120,11 @@ public class CatalogInfo implements Serializable {
     @TableField("update_cycle")
     private String updateCycle;
 
-//    /**
-//     * 用户自定义频率，当更新频率为不定期时填写
-//     */
-//    @TableField("update_cycle_user")
-//    private String updateCycleUser;
+    /**
+     * 用户自定义频率，当更新频率为不定期时填写
+     */
+    @TableField("update_cycle_user")
+    private String updateCycleUser;
 
 //    /**
 //     * 接入类型，多种时以逗号分隔，1-库表2-文件3-API

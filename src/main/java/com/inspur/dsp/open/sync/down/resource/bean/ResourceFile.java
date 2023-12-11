@@ -83,12 +83,12 @@ public class ResourceFile implements Serializable {
 //     */
 //    @TableField("from_system_name")
 //    private String fromSystemName;
-//
-//    /**
-//     * 共享条件
-//     */
-//    @TableField("share_condition")
-//    private String shareCondition;
+
+    /**
+     * 共享条件
+     */
+    @TableField("share_condition")
+    private String shareCondition;
 
     /**
      * 开放类型
@@ -96,11 +96,11 @@ public class ResourceFile implements Serializable {
     @TableField("open_type")
     private Integer openType;
 
-//    /**
-//     * 开放条件
-//     */
-//    @TableField("open_condition")
-//    private String openCondition;
+    /**
+     * 开放条件
+     */
+    @TableField("open_condition")
+    private String openCondition;
 
     /**
      * 更新周期
@@ -108,11 +108,11 @@ public class ResourceFile implements Serializable {
     @TableField("update_cycle")
     private Integer updateCycle;
 
-//    /**
-//     * 用户更新周期
-//     */
-//    @TableField("custom_update_cycle")
-//    private String customUpdateCycle;
+    /**
+     * 用户更新周期
+     */
+    @TableField("custom_update_cycle")
+    private String customUpdateCycle;
 
     /**
      * 用户id
