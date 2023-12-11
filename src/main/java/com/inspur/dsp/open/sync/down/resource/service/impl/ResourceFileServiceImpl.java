@@ -111,7 +111,7 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
         resourceFileDto.setFilePath(docId);
 
         if (!ValidationUtil.validate(resourceFileDto)) {
-            log.error("保存文件资源，请求参数存在必填项为空，需检查参数:{}", resourceFileDto.toString());
+            log.error("保存文件资源，请求参数存在必填项为空，需检查参数:{}", resourceFileDto);
             throw new RuntimeException("请求参数不合规");
         }
 

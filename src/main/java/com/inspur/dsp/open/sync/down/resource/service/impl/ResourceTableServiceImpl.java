@@ -106,7 +106,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
         // TODO 等待数据源信息提供
         DSPBeanUtils.copyProperties(resourceTable, resourceTableDto);
         if (!ValidationUtil.validate(resourceTableDto)) {
-            log.error("保存库表资源，请求参数存在必填项为空，需检查参数:{}", resourceTableDto.toString());
+            log.error("保存库表资源，请求参数存在必填项为空，需检查参数:{}", resourceTableDto);
             throw new RuntimeException("请求参数不合规");
         }
 

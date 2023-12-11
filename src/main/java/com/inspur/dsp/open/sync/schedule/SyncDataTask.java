@@ -6,6 +6,7 @@ import com.inspur.dsp.open.sync.down.resource.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
@@ -34,12 +35,24 @@ public class SyncDataTask {
     @Autowired
     private ResourceTableService resourceTableService;
 
+    @Value("${catalog.schedule.enable:1}")
+    private String catalogScheduleFlag;
+
+    @Value("${resource.table.schedule.enable:1}")
+    private String resourceTableScheduleFlag;
+
+    @Value("${resource.file.schedule.enable:1}")
+    private String resourceFileScheduleFlag;
+
 //    @Autowired
 //    private ResourceDatasourceService resourceDatasourceService;
 
     @Async
     @Scheduled(cron = "0 0/10 * * * ?")
     public void syncCatalogData() {
+        if ("0".equals(catalogScheduleFlag)){
+            return;
+        }
         log.info("--------开始同步----目录信息下行表");
         long startTime = System.currentTimeMillis();
         catalogInfoService.syncCatalogBasicInfo();
@@ -49,6 +62,9 @@ public class SyncDataTask {
     @Async
     @Scheduled(cron = "0 0/10 * * * ?")
     public void syncResourceFile() {
+        if ("0".equals(resourceFileScheduleFlag)){
+            return;
+        }
         log.info("--------开始同步----文件资源下行表");
         resourceFileService.syncResourceFile();
         log.info("--------结束同步----文件资源下行表");
@@ -57,6 +73,9 @@ public class SyncDataTask {
     @Async
     @Scheduled(cron = "0 0/10 * * * ?")
     public void syncResourceTable() {
+        if ("0".equals(resourceTableScheduleFlag)){
+            return;
+        }
 //        log.info("--------开始同步----数据源下行表");
 //        resourceDatasourceService.syncResourceDatasource();
 //        log.info("--------结束同步----数据源下行表");

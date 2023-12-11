@@ -126,7 +126,7 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
 //        catalogInfoDto.setUpdaterId(SyncDataUtil.CURRENT_ID);
 //        catalogInfoDto.setUpdaterName(SyncDataUtil.CURRENT_NAME);
         if (!ValidationUtil.validate(catalogInfoDto)) {
-            log.error("保存目录信息，请求参数catalogInfo存在必填项为空，需检查参数:{}", catalogInfoDto.toString());
+            log.error("保存目录信息，请求参数catalogInfo存在必填项为空，需检查参数:{}", catalogInfoDto);
             throw new RuntimeException("请求参数不合规");
         }
         catalogMap.put("catalogInfo", catalogInfoDto);
@@ -139,7 +139,7 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
             catalogItemDto.setNameEn(null);
             catalogItemDto.setUpdateTime(SyncDataUtil.getCurrentTime());
             if (!ValidationUtil.validate(catalogItemDto)) {
-                log.error("保存目录信息，请求参数cataItem存在必填项为空，需检查参数:{}", catalogItemDto.toString());
+                log.error("保存目录信息，请求参数cataItem存在必填项为空，需检查参数:{}", catalogItemDto);
                 throw new RuntimeException("请求参数不合规");
             }
             catalogItemDtoList.add(catalogItemDto);
