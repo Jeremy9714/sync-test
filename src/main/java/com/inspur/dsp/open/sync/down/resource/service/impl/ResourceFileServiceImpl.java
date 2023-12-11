@@ -107,7 +107,7 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
         ResourceFileDto resourceFileDto = new ResourceFileDto();
         DSPBeanUtils.copyProperties(resourceFile, resourceFileDto);
 
-        String docId = uploadResourceAttachment(resourceFile.getFilePath(),resourceFile.getFileName());
+        String docId = uploadResourceAttachment(resourceFile.getFilePath(), resourceFile.getFileName());
         resourceFileDto.setFilePath(docId);
 
         if (!ValidationUtil.validate(resourceFileDto)) {
@@ -130,7 +130,7 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
         String code = (String) result.get("code");
         if (code.equals("200")) {
             String data = (String) result.get("data");
-            log.info("保存文件资源成功。");
+            log.info("保存文件资源成功。资源id为{}", data);
         } else {
             String error = (String) result.get("error");
             log.error("保存文件资源，接口调用失败。错误说明:{}", error);

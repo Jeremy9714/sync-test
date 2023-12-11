@@ -2,15 +2,12 @@ package com.inspur.dsp.resource.api;
 
 import java.util.Map;
 
+/**
+ * @Description:
+ * @Author: zhangchy05 on 2023/12/11 11:05
+ * @Version: 1.0
+ */
 public interface IResourceBaseService {
-
-    /**
-     * 保存文件资源
-     * 支持新增和更新文件资源信息的综合接口。
-     * @param map
-     * @return
-     */
-    Map<String, Object> saveFileResource(Map<String, Object> map);
 
     /**
      * 删除文件资源接口。
@@ -18,8 +15,4 @@ public interface IResourceBaseService {
      * @return
      */
     Map<String, Object> deleteResource(String id);
-
-
-    Map<String, Object> findTableResource(String id);
-
 }

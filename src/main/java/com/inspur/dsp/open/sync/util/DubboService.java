@@ -7,6 +7,7 @@ import com.inspur.dsp.open.catalog.api.IOpenCatalogItemService;
 import com.inspur.dsp.open.catalog.api.IOpenStatisticCatalogService;
 import com.inspur.dsp.open.common.Result;
 import com.inspur.dsp.open.resource.api.IOpenResourceApplyService;
+import com.inspur.dsp.resource.api.IFileResourceService;
 import com.inspur.dsp.resource.api.IResourceBaseService;
 import com.inspur.service.OrganizationService;
 import com.inspur.service.UserAuthorityService;
@@ -26,6 +27,9 @@ public class DubboService {
 
     @Reference(group = "bsp", check = false)
     private OrganizationService organizationService;
+
+    @Reference(group = "metaresource", check = false)
+    private IFileResourceService fileResourceService;
 
     @Reference(group = "metaresource", check = false)
     private IResourceBaseService resourceBaseService;
@@ -48,7 +52,8 @@ public class DubboService {
     }
 
     public Map<String, Object> findTableResource(String id){
-        return this.resourceBaseService.findTableResource(id);
+//        return this.resourceBaseService.findTableResource(id);
+        return null;
     }
 
     /**
@@ -58,7 +63,7 @@ public class DubboService {
      * @return
      */
     public Map<String, Object> saveFileResource(Map<String, Object> map){
-        return resourceBaseService.saveFileResource(map);
+        return fileResourceService.saveFileResource(map);
     }
 
     /**
