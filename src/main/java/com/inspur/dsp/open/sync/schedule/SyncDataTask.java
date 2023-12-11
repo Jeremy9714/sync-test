@@ -57,9 +57,9 @@ public class SyncDataTask {
     @Async
     @Scheduled(cron = "0 0/10 * * * ?")
     public void syncResourceTable() {
-        log.info("--------开始同步----数据源下行表");
-        resourceDatasourceService.syncResourceDatasource();
-        log.info("--------结束同步----数据源下行表");
+//        log.info("--------开始同步----数据源下行表");
+//        resourceDatasourceService.syncResourceDatasource();
+//        log.info("--------结束同步----数据源下行表");
 
         log.info("--------开始同步----库表资源下行表");
         resourceTableService.syncResourceTable();

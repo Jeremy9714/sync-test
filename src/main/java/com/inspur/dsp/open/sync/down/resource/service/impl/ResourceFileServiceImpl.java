@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.common.file.FileStoreFactory;
-import com.inspur.dsp.open.sync.down.resource.bean.ResourceAttachment;
 import com.inspur.dsp.open.sync.down.resource.bean.ResourceFile;
 import com.inspur.dsp.open.sync.down.resource.dao.ResourceAttachmentDao;
 import com.inspur.dsp.open.sync.down.resource.dao.ResourceFileDao;
@@ -112,13 +111,7 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
         ResourceFileDto resourceFileDto = new ResourceFileDto();
         DSPBeanUtils.copyProperties(resourceFile, resourceFileDto);
 
-        // 先确认resource_file和resource_file_attachinfo表的主外键关系，根据attachinfo里的信息先下载文件，再上传到开放平台
-        ResourceAttachment resourceAttachment = resourceAttachmentDao.selectById(resourceFile.getId());
-        resourceFileDto.setFileName(resourceAttachment.getAttachFilename());
-        resourceFileDto.setFileSize(resourceAttachment.getAttachLength());
-        resourceFileDto.setFileFormat(resourceAttachment.getFileType());
-
-        String docId = uploadResourceAttachment(resourceAttachment);
+        String docId = uploadResourceAttachment(resourceFile.getFilePath(),resourceFile.getFileName());
         resourceFileDto.setFilePath(docId);
 
         if (!ValidationUtil.validate(resourceFileDto)) {
@@ -167,17 +160,18 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
         }
     }
 
-    private String uploadResourceAttachment(ResourceAttachment resourceAttachment) {
+    private String uploadResourceAttachment(String thirdPartyFilePath, String thirdPartyFileName) {
         RCBasedFileStore fileStore = (RCBasedFileStore) fileStoreFactory.getFileStore();
         // TODO 第三方文件下载
-        String fileContent = "";
+
+        String fileContent = ""; //文件内容
         if (fileContent == null) {
             log.error("下载第三方文件资源失败！");
             throw new RuntimeException("下载第三方文件资源失败！");
         }
         byte[] bytes = Base64.decodeBase64(fileContent.getBytes());
         try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);) {
-            String docId = fileStore.putFile(resourceAttachment.getAttachFilename(), bis, null);
+            String docId = fileStore.putFile(thirdPartyFileName, bis, null);
             return docId;
         } catch (Exception e) {
             log.error("文件上传开放平台失败！");

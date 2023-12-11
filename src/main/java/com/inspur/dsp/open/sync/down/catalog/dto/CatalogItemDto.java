@@ -95,6 +95,7 @@ public class CatalogItemDto implements Serializable {
     /**
      * 目录ID
      */
+    @NotNull(message = "目录id不能为空！")
     private String cataId;
 
     /**

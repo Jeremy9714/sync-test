@@ -66,53 +66,53 @@ public class CatalogItem implements Serializable {
     @TableField("not_null")
     private String notNull;
 
-    /**
-     * 是否展现项，1-是0-否
-     */
-    @TableField("is_list")
-    private String isList;
+//    /**
+//     * 是否展现项，1-是0-否
+//     */
+//    @TableField("is_list")
+//    private String isList;
+//
+//    /**
+//     * 是否搜索项，1-是0-否
+//     */
+//    @TableField("is_search")
+//    private String isSearch;
 
-    /**
-     * 是否搜索项，1-是0-否
-     */
-    @TableField("is_search")
-    private String isSearch;
+//    /**
+//     * 是否排序项，1-是0-否
+//     */
+//    @TableField("is_order")
+//    private String isOrder;
 
-    /**
-     * 是否排序项，1-是0-否
-     */
-    @TableField("is_order")
-    private String isOrder;
+//    /**
+//     * 是否统计项，1-是0-否
+//     */
+//    @TableField("is_count")
+//    private String isCount;
 
-    /**
-     * 是否统计项，1-是0-否
-     */
-    @TableField("is_count")
-    private String isCount;
+//    /**
+//     * 是否统计项，1-是0-否
+//     */
+//    @TableField("is_addr")
+//    private String isAddr;
 
-    /**
-     * 是否统计项，1-是0-否
-     */
-    @TableField("is_addr")
-    private String isAddr;
+//    /**
+//     * 展现优先级，顺序号
+//     */
+//    @TableField("order_id")
+//    private String orderId;
 
-    /**
-     * 展现优先级，顺序号
-     */
-    @TableField("order_id")
-    private String orderId;
+//    /**
+//     * 是否脱敏，0否1是
+//     */
+//    @TableField("is_masking")
+//    private String isMasking;
 
-    /**
-     * 是否脱敏，0否1是
-     */
-    @TableField("is_masking")
-    private String isMasking;
-
-    /**
-     * 脱敏规则，id,描述
-     */
-    @TableField("rules_des")
-    private String rulesDes;
+//    /**
+//     * 脱敏规则，id,描述
+//     */
+//    @TableField("rules_des")
+//    private String rulesDes;
 
     /**
      * 目录ID
@@ -126,28 +126,28 @@ public class CatalogItem implements Serializable {
     @TableField("update_time")
     private String updateTime;
 
-    /**
-     * 来源目录id
-     */
-    @TableField("origin_cata_id")
-    private String originCataId;
-
-    /**
-     * 来源目录标题
-     */
-    @TableField("origin_cata_title")
-    private String originCataTitle;
-
-    /**
-     * 来源信息项id
-     */
-    @TableField("origin_item_id")
-    private String originItemId;
-
-    /**
-     * 来源信息名称
-     */
-    @TableField("origin_item_name")
-    private String originItemName;
+//    /**
+//     * 来源目录id
+//     */
+//    @TableField("origin_cata_id")
+//    private String originCataId;
+//
+//    /**
+//     * 来源目录标题
+//     */
+//    @TableField("origin_cata_title")
+//    private String originCataTitle;
+//
+//    /**
+//     * 来源信息项id
+//     */
+//    @TableField("origin_item_id")
+//    private String originItemId;
+//
+//    /**
+//     * 来源信息名称
+//     */
+//    @TableField("origin_item_name")
+//    private String originItemName;
 
 }

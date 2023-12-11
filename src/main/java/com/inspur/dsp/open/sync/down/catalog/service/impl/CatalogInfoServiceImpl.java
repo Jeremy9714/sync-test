@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.open.common.Result;
-import com.inspur.dsp.open.sync.down.catalog.bean.CatalogGroupLink;
 import com.inspur.dsp.open.sync.down.catalog.bean.CatalogInfo;
 import com.inspur.dsp.open.sync.down.catalog.dao.CatalogInfoDao;
 import com.inspur.dsp.open.sync.down.catalog.bean.CatalogItem;
@@ -41,8 +40,8 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
     @Autowired
     private CatalogItemService catalogItemService;
 
-    @Autowired
-    private CatalogGroupLinkService catalogGroupLinkService;
+//    @Autowired
+//    private CatalogGroupLinkService catalogGroupLinkService;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -116,16 +115,16 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
         }
         CatalogInfoDto catalogInfoDto = new CatalogInfoDto();
         DSPBeanUtils.copyProperties(catalogInfo, catalogInfoDto);
-        catalogInfoDto.setCataType(10);
-        catalogInfoDto.setCataSource("1");
-        catalogInfoDto.setCataStatus(7);
-        // 中间程序生成
-        catalogInfoDto.setCreateTime(SyncDataUtil.getCurrentTime());
-        catalogInfoDto.setCreatorId(SyncDataUtil.CURRENT_ID);
-        catalogInfoDto.setCreatorName(SyncDataUtil.CURRENT_NAME);
-        catalogInfoDto.setUpdateTime(SyncDataUtil.getCurrentTime());
-        catalogInfoDto.setUpdaterId(SyncDataUtil.CURRENT_ID);
-        catalogInfoDto.setUpdaterName(SyncDataUtil.CURRENT_NAME);
+//        catalogInfoDto.setCataType(10);
+//        catalogInfoDto.setCataSource("1");
+//        catalogInfoDto.setCataStatus(7);
+//        // 中间程序生成
+//        catalogInfoDto.setCreateTime(SyncDataUtil.getCurrentTime());
+//        catalogInfoDto.setCreatorId(SyncDataUtil.CURRENT_ID);
+//        catalogInfoDto.setCreatorName(SyncDataUtil.CURRENT_NAME);
+//        catalogInfoDto.setUpdateTime(SyncDataUtil.getCurrentTime());
+//        catalogInfoDto.setUpdaterId(SyncDataUtil.CURRENT_ID);
+//        catalogInfoDto.setUpdaterName(SyncDataUtil.CURRENT_NAME);
         if (!ValidationUtil.validate(catalogInfoDto)) {
             log.error("保存目录信息，请求参数catalogInfo存在必填项为空，需检查参数:{}", catalogInfoDto.toString());
             throw new RuntimeException("请求参数不合规");
