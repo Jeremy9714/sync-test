@@ -1,9 +1,11 @@
 package com.inspur.dsp.open.sync.down.catalog.dto;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class CatalogInfoDto implements Serializable {
@@ -118,32 +120,38 @@ public class CatalogInfoDto implements Serializable {
     /**
      * 发布时间
      */
-    private String releasedTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date releasedTime;
 
     /**
      * 下架时间
      */
-    private String offlineTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date offlineTime;
 
     /**
      * 数据更新时间
      */
-    private String dataUpdateTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date dataUpdateTime;
 
     /**
      * 数据文件更新生成时间
      */
-    private String datafileUpdateTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date datafileUpdateTime;
 
     /**
      * 地图配置更新时间
      */
-    private String datamapUpdateTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date datamapUpdateTime;
 
     /**
      * 服务更新时间
      */
-    private String dataapiUpdateTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date dataapiUpdateTime;
 
     /**
      * 目录来源：1-共享交换的目录，2-对接系统上报的目录，3-接入系统注册的目录，4-目录系统新增目录
@@ -176,8 +184,9 @@ public class CatalogInfoDto implements Serializable {
     /**
      * 创建时间
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "创建时间不能为空！")
-    private String createTime;
+    private Date createTime;
 
     /**
      * 创建者id
@@ -193,8 +202,9 @@ public class CatalogInfoDto implements Serializable {
     /**
      * 更新时间
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "更新时间不能为空！")
-    private String updateTime;
+    private Date updateTime;
 
     /**
      * 更新者id

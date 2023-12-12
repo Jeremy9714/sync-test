@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @Description:
@@ -124,7 +125,7 @@ public class CatalogItem implements Serializable {
      * 更新时间
      */
     @TableField("update_time")
-    private String updateTime;
+    private Date updateTime;
 
 //    /**
 //     * 来源目录id

@@ -29,11 +29,12 @@ public class OpenApiService {
         String url = openUrl + "/admin/datasource/addDataSource";
         log.debug("保存数据源，url:{}", url);
         log.debug("保存数据源，请求参数:{}", datasourceMap.toString());
-        HttpHeaders httpHeaders = new HttpHeaders() {{
-            add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-        }};
-        HttpEntity httpEntity = new HttpEntity<>(datasourceMap, httpHeaders);
-        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
+//        HttpHeaders httpHeaders = new HttpHeaders() {{
+//            add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+//        }};
+//        HttpEntity httpEntity = new HttpEntity<>(datasourceMap, httpHeaders);
+//        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
+        JSONObject result = restTemplate.postForObject(url, datasourceMap, JSONObject.class);
         log.debug("保存数据源，返回参数:{}", result.toString());
         int code = result.getIntValue("code");
         if (code == 0) {
@@ -49,18 +50,20 @@ public class OpenApiService {
     /**
      * 调用，保存库表资源
      */
-    public void insertOrUpdateResourceTable(Map<String,Object> tableMap) {
-        String url = openUrl + "/oresource/admin/resource/addTableResource";
+    public void insertOrUpdateResourceTable(Map<String, Object> tableMap) {
+        String url = openUrl + "/oresource/admin/resource/addTableResource?dataSourceIdcheck={dataSourceIdcheck}"+
+                "&itemId={itemId}&cataid={cataid}&fromfiletable={fromfiletable}&modal_file_info={modal_file_info}" +
+                "&table_desc={table_desc}&dataTableName={dataTableName}";
         log.debug("保存库表资源，url:{}", url);
         log.debug("保存库表资源，请求参数:{}", tableMap.toString());
-        HttpHeaders httpHeaders = new HttpHeaders() {{
-            add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-        }};
-        HttpEntity httpEntity = new HttpEntity<>(tableMap, httpHeaders);
-        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
+//        HttpHeaders httpHeaders = new HttpHeaders() {{
+//            add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+//        }};
+//        HttpEntity httpEntity = new HttpEntity<>(new JSONObject(tableMap), httpHeaders);
+        JSONObject result = restTemplate.getForObject(url, JSONObject.class, tableMap);
         log.debug("保存库表资源，返回参数:{}", result.toString());
         int code = result.getIntValue("code");
-        if (code == 0) {
+        if (code == 1) {
             log.info("保存库表资源成功。");
         } else {
             String msg = result.getString("msg");
@@ -75,18 +78,20 @@ public class OpenApiService {
      *
      * @return
      */
-    public void deleteResourceTable(Map<String,Object> tableMap) {
-        String url = openUrl + "/oresource/admin/resource/deleteTableResource";
+    public void deleteResourceTable(Map<String, Object> tableMap) {
+        String url = openUrl + "/oresource/admin/resource/deleteTableResource?table_id={table_id}"+
+                "&datasource_id={datasource_id}&cata_id={cata_id}";
         log.debug("删除库表资源，url:{}", url);
         log.debug("删除库表资源，请求参数:{}", tableMap.toString());
-        HttpHeaders httpHeaders = new HttpHeaders() {{
-            add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-        }};
-        HttpEntity httpEntity = new HttpEntity<>(tableMap, httpHeaders);
-        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
+//        HttpHeaders httpHeaders = new HttpHeaders() {{
+//            add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+//        }};
+//        HttpEntity httpEntity = new HttpEntity<>(tableMap, httpHeaders);
+//        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
+        JSONObject result = restTemplate.postForObject(url, tableMap, JSONObject.class);
         log.debug("删除库表资源，返回参数:{}", result.toString());
         int code = result.getIntValue("code");
-        if (code == 0) {
+        if (code == 1) {
             log.info("删除库表资源成功。");
             // TODO 资源下架后，查询一次目录，如果该目录下没有资源，就把目录也下架
         } else {
@@ -96,16 +101,16 @@ public class OpenApiService {
         }
     }
 
-    /**
-     * 下载文件
-     *
-     * @param doc_id
-     * @return
-     */
-    public ResponseEntity<byte[]> fileDownload(String doc_id) {
-        String url = openUrl + "/rcservice/doc?doc_id=" + doc_id;
-        ResponseEntity<byte[]> result = restTemplate.exchange(url, HttpMethod.GET, null, byte[].class);
-        return result;
-    }
+//    /**
+//     * 下载文件
+//     *
+//     * @param doc_id
+//     * @return
+//     */
+//    public ResponseEntity<byte[]> fileDownload(String doc_id) {
+//        String url = openUrl + "/rcservice/doc?doc_id=" + doc_id;
+//        ResponseEntity<byte[]> result = restTemplate.exchange(url, HttpMethod.GET, null, byte[].class);
+//        return result;
+//    }
 
 }

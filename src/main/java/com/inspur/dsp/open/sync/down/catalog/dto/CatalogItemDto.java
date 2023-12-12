@@ -1,9 +1,11 @@
 package com.inspur.dsp.open.sync.down.catalog.dto;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class CatalogItemDto implements Serializable {
@@ -101,8 +103,9 @@ public class CatalogItemDto implements Serializable {
     /**
      * 更新时间
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "更新时间不能为空！")
-    private String updateTime;
+    private Date updateTime;
 
     /**
      * 来源目录id

@@ -51,9 +51,9 @@ public class SyncDataTask {
 //    private ResourceDatasourceService resourceDatasourceService;
 
     @Async
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "${task.schedule.cron:0 0/1 * * * ?}")
     public void syncCatalogData() {
-        if ("0".equals(catalogScheduleFlag)){
+        if (!"1".equals(catalogScheduleFlag)){
             return;
         }
         log.info("--------开始同步----目录信息下行表");
@@ -63,9 +63,9 @@ public class SyncDataTask {
     }
 
     @Async
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "${task.schedule.cron:0 0/1 * * * ?}")
     public void syncResourceFile() {
-        if ("0".equals(resourceFileScheduleFlag)){
+        if (!"1".equals(resourceFileScheduleFlag)){
             return;
         }
         log.info("--------开始同步----文件资源下行表");
@@ -74,9 +74,9 @@ public class SyncDataTask {
     }
 
     @Async
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "${task.schedule.cron:0 0/1 * * * ?}")
     public void syncResourceTable() {
-        if ("0".equals(resourceTableScheduleFlag)){
+        if (!"1".equals(resourceTableScheduleFlag)){
             return;
         }
 //        log.info("--------开始同步----数据源下行表");

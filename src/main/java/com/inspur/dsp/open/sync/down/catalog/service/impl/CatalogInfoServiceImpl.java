@@ -113,16 +113,6 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
         }
         CatalogInfoDto catalogInfoDto = new CatalogInfoDto();
         DSPBeanUtils.copyProperties(catalogInfo, catalogInfoDto);
-//        catalogInfoDto.setCataType(10);
-//        catalogInfoDto.setCataSource("1");
-//        catalogInfoDto.setCataStatus(7);
-//        // 中间程序生成
-//        catalogInfoDto.setCreateTime(SyncDataUtil.getCurrentTime());
-//        catalogInfoDto.setCreatorId(SyncDataUtil.CURRENT_ID);
-//        catalogInfoDto.setCreatorName(SyncDataUtil.CURRENT_NAME);
-//        catalogInfoDto.setUpdateTime(SyncDataUtil.getCurrentTime());
-//        catalogInfoDto.setUpdaterId(SyncDataUtil.CURRENT_ID);
-//        catalogInfoDto.setUpdaterName(SyncDataUtil.CURRENT_NAME);
         if (!ValidationUtil.validate(catalogInfoDto)) {
             log.error("保存目录信息，请求参数catalogInfo存在必填项为空，需检查参数:{}", catalogInfoDto);
             throw new RuntimeException("请求参数不合规");
@@ -134,8 +124,8 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
         for (CatalogItem catalogItem : catalogItemList) {
             CatalogItemDto catalogItemDto = new CatalogItemDto();
             DSPBeanUtils.copyProperties(catalogItem, catalogItemDto);
-            catalogItemDto.setNameEn(null);
-            catalogItemDto.setUpdateTime(SyncDataUtil.getCurrentTime());
+//            catalogItemDto.setNameEn(null);
+            catalogItemDto.setUpdateTime(new Date());
             if (!ValidationUtil.validate(catalogItemDto)) {
                 log.error("保存目录信息，请求参数cataItem存在必填项为空，需检查参数:{}", catalogItemDto);
                 throw new RuntimeException("请求参数不合规");
@@ -163,7 +153,7 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
         Result<Map<String, Object>> result = dubboService.insertOrUpdateCatalogInfo(catalogMap);
         log.debug("保存目录和信息项，返回结果:{}", result.toString());
         int code = result.getCode();
-        if (code == 200) {
+        if (code == 0) {
             log.info("保存目录和信息项成功");
         } else {
             String msg = result.getMessage();

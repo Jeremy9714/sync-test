@@ -19,7 +19,7 @@ public class ResourceTableDto implements Serializable {
      * 数据源id
      */
     @NotNull(message="数据源id不能为空！")
-    private String dataSourceIdCheck;
+    private String dataSourceIdcheck;
 
     /**
      * 库表id

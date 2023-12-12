@@ -3,6 +3,7 @@ package com.inspur.dsp.open.sync.down.resource.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.inspur.dsp.common.utils.HttpUtils;
 import com.inspur.dsp.open.sync.down.resource.bean.ResourceFile;
 import com.inspur.dsp.open.sync.down.resource.dao.ResourceFileDao;
 import com.inspur.dsp.open.sync.down.resource.dto.ResourceFileDto;
@@ -10,7 +11,6 @@ import com.inspur.dsp.open.sync.down.resource.service.ResourceFileService;
 import com.inspur.dsp.open.sync.util.*;
 import com.inspur.dsp.open.upload.FileStoreFactory;
 import com.inspur.dsp.open.upload.RCBasedFileStore;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +19,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -163,20 +160,33 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
     private String uploadResourceAttachment(String thirdPartyFilePath, String thirdPartyFileName) {
         RCBasedFileStore fileStore = (RCBasedFileStore) fileStoreFactory.getFileStore();
         // TODO 第三方文件下载
+        log.debug(thirdPartyFilePath);
+        if (StringUtils.isNotEmpty(thirdPartyFilePath) && thirdPartyFilePath.startsWith("https")) {
+            return null;
+        }
         InputStream is = null;
+
         try {
+            thirdPartyFilePath = thirdPartyFilePath.replaceAll(" ", "%20");
             URL url = new URL(thirdPartyFilePath);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            is = conn.getInputStream();
-            if (is == null) {
-                log.error("下载第三方文件资源失败！");
-                throw new RuntimeException("下载第三方文件资源失败！");
-            }
+            URLConnection urlConn = url.openConnection();
+            HttpURLConnection httpUrlConn = (HttpURLConnection) urlConn;
+//            httpUrlConn.setRequestProperty();
+            httpUrlConn.setDoOutput(false);
+            httpUrlConn.setDoInput(true);
+            httpUrlConn.setUseCaches(false);
+            httpUrlConn.setRequestMethod("GET");
+            is = httpUrlConn.getInputStream();
             String docId = fileStore.putFile(thirdPartyFileName, is, null);
-//            log.info("文件上传成功，doc_id: {}", docId);
+            if (docId == null) {
+                log.error("文件上传开放平台失败！");
+                throw new RuntimeException("文件上传开放平台失败！");
+            }
+            is.close();
             return docId;
         } catch (Exception e) {
-            log.error("文件上传开放平台失败！");
+            log.error("文件上传开放平台失败");
+            e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
             if (is != null) {
@@ -187,6 +197,31 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
                 }
             }
         }
+//
+//        try {
+//            URL url = new URL(thirdPartyFilePath);
+//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//            is = conn.getInputStream();
+//            if (is == null) {
+//                log.error("下载第三方文件资源失败！");
+//                throw new RuntimeException("下载第三方文件资源失败！");
+//            }
+//            String docId = fileStore.putFile(thirdPartyFileName, is, null);
+////            log.info("文件上传成功，doc_id: {}", docId);
+////            conn.disconnect();
+//            return docId;
+//        } catch (Exception e) {
+//            log.error("文件上传开放平台失败！");
+//            throw new RuntimeException(e);
+//        } finally {
+//            if (is != null) {
+//                try {
+//                    is.close();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
     }
 
 }

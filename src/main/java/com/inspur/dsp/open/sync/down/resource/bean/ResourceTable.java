@@ -21,18 +21,18 @@ public class ResourceTable implements Serializable {
      * 数据源id
      */
     @TableField("datasource_id_check")
-    private String dataSourceIdCheck;
+    private String dataSourceIdcheck;
 
     /**
      * 库表id
      */
-    @TableField("item_id")
+    @TableField("itemId")
     private String itemId;
 
     /**
      * 目录id
      */
-    @TableField("cata_id")
+    @TableField("cataid")
     private String cataid;
 
 //    /**
