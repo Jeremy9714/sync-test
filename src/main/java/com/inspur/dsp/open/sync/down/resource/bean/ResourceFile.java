@@ -72,17 +72,17 @@ public class ResourceFile implements Serializable {
     @TableField("share_type")
     private Integer shareType;
 
-//    /**
-//     * 来源系统编码
-//     */
-//    @TableField("from_system_id")
-//    private String fromSystemId;
-//
-//    /**
-//     * 来源系统名称
-//     */
-//    @TableField("from_system_name")
-//    private String fromSystemName;
+    /**
+     * 来源系统编码
+     */
+    @TableField("from_system_id")
+    private String fromSystemId;
+
+    /**
+     * 来源系统名称
+     */
+    @TableField("from_system_name")
+    private String fromSystemName;
 
     /**
      * 共享条件
@@ -131,11 +131,11 @@ public class ResourceFile implements Serializable {
      */
     private Integer status;
 
-//    /**
-//     * 资源开放状态
-//     */
-//    @TableField("open_status")
-//    private Integer openStatus;
+    /**
+     * 资源开放状态
+     */
+    @TableField("open_status")
+    private Integer openStatus;
 
     /**
      * 文件名称

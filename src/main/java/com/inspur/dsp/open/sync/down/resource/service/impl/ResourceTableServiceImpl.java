@@ -44,7 +44,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
     @Override
     public boolean syncResourceTable() {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_RESOURCE_TABLE_KEY);
             String latestOperationDate = resourceTableDao.getLatestOperationDate();
             // 无数据

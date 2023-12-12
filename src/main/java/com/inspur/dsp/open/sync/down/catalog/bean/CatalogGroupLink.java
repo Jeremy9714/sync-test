@@ -37,17 +37,17 @@ public class CatalogGroupLink implements Serializable {
     @TableField("cata_id")
     private String cataId;
 
-    /**
-     * 同步时间戳
-     */
-    @TableField("operate_date")
-    private Date operateDate;
-
-    /**
-     * 新增：I
-     * 修改：U
-     * 删除：D
-     */
-    @TableField("operate_type")
-    private String operateType;
+//    /**
+//     * 同步时间戳
+//     */
+//    @TableField("operate_date")
+//    private Date operateDate;
+//
+//    /**
+//     * 新增：I
+//     * 修改：U
+//     * 删除：D
+//     */
+//    @TableField("operate_type")
+//    private String operateType;
 }

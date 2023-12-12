@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Data
 public class CatalogInfoDto implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1957547L;
 
     /**
      * 目录id

@@ -49,7 +49,7 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
     @Override
     public boolean syncResourceFile() {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_RESOURCE_FILE_KEY);
             String latestOperationDate = resourceFileDao.getLatestOperationDate();
             // 无数据
@@ -69,7 +69,7 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
                 wrapper.gt("operate_date", lastSyncDate);
 
             }
-            wrapper.orderBy("operate_date").last("limit 0,100");
+            wrapper.orderBy("operate_date").last("limit 0,20");
             List<ResourceFile> resultList = this.selectList(wrapper);
             log.debug("查询结果: {}", JSONObject.toJSONString(resultList));
 

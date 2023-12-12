@@ -42,7 +42,7 @@ public class ResourceDatasourceServiceImpl extends ServiceImpl<ResourceDatasourc
     @Override
     public boolean syncResourceDatasource() {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_RESOURCE_FILE_KEY);
             String latestOperationDate = resourceDatasourceDao.getLatestOperationDate();
             // 无数据

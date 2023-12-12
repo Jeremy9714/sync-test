@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 @Data
 public class CatalogGroupLinkDto implements Serializable {
-    private static final long serialVersionUID = -12L;
+    private static final long serialVersionUID = -14542L;
 
     /**
      * 关联id，为主键

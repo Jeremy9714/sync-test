@@ -35,17 +35,17 @@ public class ResourceTable implements Serializable {
     @TableField("cataid")
     private String cataid;
 
-//    /**
-//     * 来自于数据文件导入 ，1：是
-//     */
-//    @TableField("from_file_table")
-//    private String fromfiletable;
-//
-//    /**
-//     * 样例数据文件
-//     */
-//    @TableField("modal_file_info")
-//    private String modalFileInfo;
+    /**
+     * 来自于数据文件导入 ，1：是
+     */
+    @TableField("from_file_table")
+    private String fromfiletable;
+
+    /**
+     * 样例数据文件
+     */
+    @TableField("modal_file_info")
+    private String modalFileInfo;
 
     /**
      * 英文名称
