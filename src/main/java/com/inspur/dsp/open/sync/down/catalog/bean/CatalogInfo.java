@@ -85,7 +85,7 @@ public class CatalogInfo implements Serializable {
     private String orgName;
 
     /**
-     * provider_internal_organ
+     * 提供方内部部门
      */
     @TableField("provider_interal_organ")
     private String providerInternalOrgan;
