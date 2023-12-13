@@ -1,4 +1,4 @@
-package com.inspur.dsp.open.sync.config;
+package com.inspur.dsp.open.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

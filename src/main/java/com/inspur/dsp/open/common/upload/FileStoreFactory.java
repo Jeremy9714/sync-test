@@ -1,4 +1,4 @@
-package com.inspur.dsp.open.upload;
+package com.inspur.dsp.open.common.upload;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

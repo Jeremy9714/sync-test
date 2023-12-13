@@ -101,15 +101,30 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
      */
     private Map<String, Object> transformTableToMap(ResourceTable resourceTable) {
         ResourceTableDto resourceTableDto = new ResourceTableDto();
-        // TODO 等待数据源信息提供
+
         DSPBeanUtils.copyProperties(resourceTable, resourceTableDto);
-        resourceTableDto.setItemId(new String[]{resourceTable.getItemId()});
+        resourceTableDto.setItemId(resourceTable.getItemId().split(","));
+
+        // 获取字段信息columnnameEn拼接
+        List<Map<String, Object>> tableColumnList = openApiService.getTableColumn(resourceTableDto.getDataSourceIdcheck(), resourceTableDto.getDataTableName());
+        StringBuilder sb = new StringBuilder();
+        for (Map<String, Object> columnMap : tableColumnList) {
+            columnMap.forEach((k, v) -> {
+                sb.append(v).append("@");
+            });
+        }
+        log.info("columnnameEn裁剪前: {}", sb.toString());
+        sb.deleteCharAt(sb.length() - 1);
+        log.info("columnnameEn裁剪后: {}", sb.toString());
+        resourceTableDto.setColumnnameEn(sb.toString());
+
         if (!ValidationUtil.validate(resourceTableDto)) {
             log.error("保存库表资源，请求参数存在必填项为空，需检查参数:{}", resourceTableDto);
             throw new RuntimeException("请求参数不合规");
         }
 
         Map<String, Object> tableMap = DSPBeanUtils.beanToMap(resourceTableDto);
+        tableMap.put("itemId", resourceTableDto.getItemId());
         return tableMap;
     }
 

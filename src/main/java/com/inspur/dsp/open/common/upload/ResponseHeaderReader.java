@@ -1,4 +1,4 @@
-package com.inspur.dsp.open.upload;
+package com.inspur.dsp.open.common.upload;
 
 import java.util.List;
 import java.util.Map;

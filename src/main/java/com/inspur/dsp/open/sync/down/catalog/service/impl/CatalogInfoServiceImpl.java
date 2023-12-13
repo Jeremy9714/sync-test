@@ -122,6 +122,15 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
         }
         Map<String, Object> catalogInfoMap = DSPBeanUtils.beanToMap(catalogInfoDto);
 //        catalogMap.put("catalogInfo", catalogInfoDto);
+        catalogInfoMap.put("releasedTime",catalogInfo.getReleasedTime());
+        catalogInfoMap.put("offlineTime",catalogInfo.getOfflineTime());
+        catalogInfoMap.put("dataUpdateTime",catalogInfo.getDataUpdateTime());
+        catalogInfoMap.put("datafileUpdateTime",catalogInfo.getDatafileUpdateTime());
+        catalogInfoMap.put("datamapUpdateTime",catalogInfo.getDatamapUpdateTime());
+        catalogInfoMap.put("dataapiUpdateTime",catalogInfo.getDataapiUpdateTime());
+        catalogInfoMap.put("createTime",catalogInfo.getCreateTime());
+        catalogInfoMap.put("updateTime",catalogInfo.getUpdateTime());
+
         catalogMap.put("catalogInfo", catalogInfoMap);
 
         // cataItemList
@@ -144,6 +153,7 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
                 throw new RuntimeException("请求参数不合规");
             }
             Map<String, Object> catalogItemMap = DSPBeanUtils.beanToMap(catalogItemDto);
+            catalogItemMap.put("updateTime",catalogItem.getUpdateTime());
             catalogItemDtoList.add(catalogItemMap);
 //            catalogItemDtoList.add(catalogItemDto);
         }

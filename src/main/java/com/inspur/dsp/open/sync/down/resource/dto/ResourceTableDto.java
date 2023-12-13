@@ -56,4 +56,7 @@ public class ResourceTableDto implements Serializable {
     @NotNull(message = "中文名称不能为空！")
     @JsonProperty("table_desc")
     private String tableDesc;
+
+    @NotNull(message = "字段信息不能为空！")
+    private String columnnameEn;
 }

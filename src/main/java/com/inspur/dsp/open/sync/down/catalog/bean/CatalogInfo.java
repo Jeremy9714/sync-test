@@ -76,7 +76,7 @@ public class CatalogInfo implements Serializable {
      * 部门类型
      */
     @TableField("organ_type")
-    private int organType;
+    private Integer organType;
 
     /**
      * 部门名称
@@ -135,7 +135,7 @@ public class CatalogInfo implements Serializable {
     /**
      * 开放方式，多种时以逗号分隔，1-数据集2-文件集3-API接口4-地图
      */
-    @TableField("user_type")
+    @TableField("use_type")
     private String useType;
 
     /**
@@ -196,7 +196,7 @@ public class CatalogInfo implements Serializable {
      * 目录状态，（0：草稿；1：待接入审核；2：接入审核驳回；3：待汇聚；4：待发布审核；5：发布审核驳回；6：待发布；7：已发布；8：已下架；-1：删除）|
      */
     @TableField("cata_status")
-    private int cataStatus;
+    private Integer cataStatus;
 
     /**
      * 创建时间
