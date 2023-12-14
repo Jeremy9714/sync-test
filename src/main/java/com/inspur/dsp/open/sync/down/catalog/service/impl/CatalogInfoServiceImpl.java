@@ -146,6 +146,7 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
         for (CatalogItem catalogItem : catalogItemList) {
             CatalogItemDto catalogItemDto = new CatalogItemDto();
             DSPBeanUtils.copyProperties(catalogItem, catalogItemDto);
+
 //            catalogItemDto.setNameEn(null);
             catalogItemDto.setUpdateTime(new Date());
             if (!ValidationUtil.validate(catalogItemDto)) {

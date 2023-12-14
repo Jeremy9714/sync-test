@@ -3,6 +3,8 @@ package com.inspur.dsp.open.sync.down.resource.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.inspur.dsp.open.sync.down.catalog.bean.CatalogItem;
+import com.inspur.dsp.open.sync.down.catalog.dao.CatalogItemDao;
 import com.inspur.dsp.open.sync.down.resource.bean.ResourceTable;
 import com.inspur.dsp.open.sync.down.resource.dao.ResourceTableDao;
 import com.inspur.dsp.open.sync.down.resource.dto.ResourceTableDto;
@@ -20,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -39,6 +38,9 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
 
     @Autowired
     private OpenApiService openApiService;
+
+    @Autowired
+    private CatalogItemDao catalogItemDao;
 
     @Transactional
     @Override
@@ -103,20 +105,43 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
         ResourceTableDto resourceTableDto = new ResourceTableDto();
 
         DSPBeanUtils.copyProperties(resourceTable, resourceTableDto);
-        resourceTableDto.setItemId(resourceTable.getItemId().split(","));
+        resourceTableDto.setItemId(resourceTable.getItemId());
 
         // 获取字段信息columnnameEn拼接
-        List<Map<String, Object>> tableColumnList = openApiService.getTableColumn(resourceTableDto.getDataSourceIdcheck(), resourceTableDto.getDataTableName());
-        StringBuilder sb = new StringBuilder();
-        for (Map<String, Object> columnMap : tableColumnList) {
-            columnMap.forEach((k, v) -> {
-                sb.append(v).append("@");
-            });
-        }
-        log.info("columnnameEn裁剪前: {}", sb.toString());
-        sb.deleteCharAt(sb.length() - 1);
-        log.info("columnnameEn裁剪后: {}", sb.toString());
-        resourceTableDto.setColumnnameEn(sb.toString());
+        EntityWrapper<CatalogItem> wrapper = new EntityWrapper<>();
+        wrapper.eq("cata_id", resourceTable.getCataid());
+        List<CatalogItem> catalogItems = catalogItemDao.selectList(wrapper);
+
+        StringBuilder columnnameEn = new StringBuilder();
+        StringBuilder itemIds = new StringBuilder();
+        catalogItems.stream().forEach(item -> {
+            columnnameEn.append(item.getNameEn()).append(",");
+            itemIds.append(item.getItemId()).append(",");
+        });
+
+        columnnameEn.deleteCharAt(columnnameEn.length() - 1);
+        itemIds.deleteCharAt(itemIds.length() - 1);
+
+        log.info("columnnameEn字符串 {}", columnnameEn.toString());
+        log.info("items字符串 {}", itemIds.toString());
+
+//        List<Map<String, Object>> tableColumnList = openApiService.getTableColumn(resourceTableDto.getDataSourceIdcheck(), resourceTableDto.getDataTableName());
+//        StringBuilder sb = new StringBuilder();
+//        for (Map<String, Object> columnMap : tableColumnList) {
+//            String name = MapUtils.getString(columnMap, "name");
+//            String description = MapUtils.getString(columnMap, "description");
+//            String isNull = MapUtils.getString(columnMap, "isNull");
+//            String isPk = MapUtils.getString(columnMap, "isPk");
+//            String format = MapUtils.getString(columnMap, "format");
+//            String length = MapUtils.getString(columnMap, "length");
+//            sb.append(name).append("@").append(description).append("@")
+//                    .append(isNull).append("@").append("isPk").append("@")
+//                    .append(isPk).append("@").append(format).append("@")
+//                    .append("length").append(",");
+//        }
+//        resourceTableDto.setColumnnameEn(sb.toString());
+        resourceTableDto.setColumnnameEn(columnnameEn.toString());
+        resourceTableDto.setItemId(itemIds.toString());
 
         if (!ValidationUtil.validate(resourceTableDto)) {
             log.error("保存库表资源，请求参数存在必填项为空，需检查参数:{}", resourceTableDto);
@@ -124,7 +149,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
         }
 
         Map<String, Object> tableMap = DSPBeanUtils.beanToMap(resourceTableDto);
-        tableMap.put("itemId", resourceTableDto.getItemId());
+
         return tableMap;
     }
 

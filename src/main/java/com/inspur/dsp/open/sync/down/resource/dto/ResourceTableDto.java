@@ -25,7 +25,7 @@ public class ResourceTableDto implements Serializable {
      * 库表id
      */
     @NotNull(message = "库表id不能为空！")
-    private String[] itemId;
+    private String itemId;
 
     /**
      * 目录id

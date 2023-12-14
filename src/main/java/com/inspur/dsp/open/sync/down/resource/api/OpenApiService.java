@@ -1,6 +1,7 @@
 package com.inspur.dsp.open.sync.down.resource.api;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,13 +57,24 @@ public class OpenApiService {
      */
     public void insertOrUpdateResourceTable(Map<String, Object> tableMap) {
         String url = openUrl + "/oresource/admin/resource/addTableResource?dataSourceIdcheck={dataSourceIdcheck}" +
-                "&itemId={itemId}&cataid={cataid}&fromfiletable={fromfiletable}&modal_file_info={modal_file_info}" +
-                "&table_desc={table_desc}&dataTableName={dataTableName}&columnnameEn={columnnameEn}";
+                "&cataid={cataid}&fromfiletable={fromfiletable}&modal_file_info={modal_file_info}" +
+                "&table_desc={table_desc}&dataTableName={dataTableName}";
+
+        String[] itemIds = MapUtils.getString(tableMap, "itemId").split(",");
+        String[] columnnameEns = MapUtils.getString(tableMap, "columnnameEn").split(",");
+
+        for (int i = 0; i < itemIds.length; ++i) {
+            url += "&itemId=" + itemIds[i];
+        }
+        for (int i = 0; i < columnnameEns.length; ++i) {
+            url += "&columnnameEn=" + columnnameEns[i];
+        }
+
         log.debug("保存库表资源，url:{}", url);
         log.debug("保存库表资源，请求参数:{}", tableMap.toString());
         HttpHeaders httpHeaders = new HttpHeaders() {{
             add("Content-Type", "application/json;charset=UTF-8");
-            add("Cookie", "SESSION="+sessionId);
+            add("Cookie", "SESSION=" + sessionId);
         }};
         HttpEntity httpEntity = new HttpEntity<>(httpHeaders);
         JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class, tableMap);
@@ -89,12 +101,13 @@ public class OpenApiService {
                 "&datasource_id={datasource_id}&cata_id={cata_id}";
         log.debug("删除库表资源，url:{}", url);
         log.debug("删除库表资源，请求参数:{}", tableMap.toString());
-//        HttpHeaders httpHeaders = new HttpHeaders() {{
-//            add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-//        }};
-//        HttpEntity httpEntity = new HttpEntity<>(tableMap, httpHeaders);
-//        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
-        JSONObject result = restTemplate.postForObject(url, tableMap, JSONObject.class);
+        HttpHeaders httpHeaders = new HttpHeaders() {{
+            add("Content-Type", "application/json;charset=UTF-8");
+            add("Cookie", "SESSION=" + sessionId);
+        }};
+        HttpEntity httpEntity = new HttpEntity<>(httpHeaders);
+        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class, tableMap);
+//        JSONObject result = restTemplate.postForObject(url, tableMap, JSONObject.class);
         log.debug("删除库表资源，返回参数:{}", result.toString());
         int code = result.getIntValue("code");
         if (code == 1) {
@@ -133,6 +146,7 @@ public class OpenApiService {
         log.debug("查询库表字段接口，请求参数:{}", paramMap.toString());
         HttpHeaders httpHeaders = new HttpHeaders() {{
             add("Content-Type", "application/json;charset=UTF-8");
+            add("Cookie", "SESSION=" + sessionId);
         }};
         HttpEntity httpEntity = new HttpEntity<>(httpHeaders);
         JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class, paramMap);

@@ -120,7 +120,7 @@ public class ValidationUtil {
             throw new CommonException(ErrorMessage.NO_RES_TABLE_DSID);
         }
 
-        if (null == resourceTableDto.getItemId() || resourceTableDto.getItemId().length == 0) {
+        if (null == resourceTableDto.getItemId() || StringUtils.isBlank(resourceTableDto.getItemId())) {
             throw new CommonException(ErrorMessage.NO_RES_TABLE_ITEMID);
         }
 

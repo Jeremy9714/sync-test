@@ -47,47 +47,47 @@ public class CatalogItemDto implements Serializable {
     /**
      * 表明是否为主键(0:否;1:是)
      */
-    private String isprimarykey;
+    private Integer isprimarykey;
 
     /**
      * 是否为空，0:可以为空；1：不可为空
      */
-    private String notNull;
+    private Integer notNull;
 
     /**
      * 是否展现项，1-是 0-否
      */
-    private String isList;
+    private Integer isList;
 
     /**
      * 是否搜索项，1-是 0-否
      */
-    private String isSearch;
+    private Integer isSearch;
 
     /**
      * 是否排序项，1-是 0-否
      */
-    private String isOrder;
+    private Integer isOrder;
 
     /**
      * 是否统计项，1-是 0-否
      */
-    private String isCount;
+    private Integer isCount;
 
     /**
      * 是否统计项，1-是 0-否
      */
-    private String isAddr;
+    private Integer isAddr;
 
     /**
      * 展现优先级，顺序号
      */
-    private String orderId;
+    private Integer orderId;
 
     /**
      * 是否脱敏， 0否1是
      */
-    private String isMasking;
+    private Integer isMasking;
 
     /**
      * 脱敏规则， id,描述
