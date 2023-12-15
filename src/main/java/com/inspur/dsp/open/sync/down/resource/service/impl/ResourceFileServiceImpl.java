@@ -1,6 +1,12 @@
 package com.inspur.dsp.open.sync.down.resource.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.OSSException;
+import com.aliyun.oss.common.auth.CredentialsProviderFactory;
+import com.aliyun.oss.common.auth.EnvironmentVariableCredentialsProvider;
+import com.aliyun.oss.model.OSSObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.open.sync.down.resource.bean.ResourceFile;
@@ -14,14 +20,15 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +50,18 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
 
     @Autowired
     private FileStoreFactory fileStoreFactory;
+
+    @Value("${oss.end-point}")
+    private String endPoint;
+
+    @Value("${oss.bucket-name}")
+    private String bucketName;
+
+    @Value("${oss.accessKeyId}")
+    private String accessKeyId;
+
+    @Value("${oss.secretAccessKey}")
+    private String secretAccessKey;
 
     @Transactional
     @Override
@@ -103,7 +122,7 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
      * @param resourceFile
      * @return
      */
-    private Map<String, Object> transformFileToMap(ResourceFile resourceFile) throws RuntimeException {
+    private Map<String, Object> transformFileToMap(ResourceFile resourceFile) throws Exception {
         ResourceFileDto resourceFileDto = new ResourceFileDto();
         DSPBeanUtils.copyProperties(resourceFile, resourceFileDto);
 
@@ -156,71 +175,85 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
         }
     }
 
-    private String uploadResourceAttachment(String thirdPartyFilePath, String thirdPartyFileName) {
+    private String uploadResourceAttachment(String filePath, String fileName) throws Exception {
         RCBasedFileStore fileStore = (RCBasedFileStore) fileStoreFactory.getFileStore();
+
+        log.info("endpoint: {}", endPoint);
+
         // TODO 第三方文件下载
-        log.debug(thirdPartyFilePath);
-        if (StringUtils.isNotEmpty(thirdPartyFilePath) && thirdPartyFilePath.startsWith("https")) {
-            return null;
+//        EnvironmentVariableCredentialsProvider credentialProvider = CredentialsProviderFactory.newEnvironmentVariableCredentialsProvider();
+//        OSS ossClient = new OSSClientBuilder().build(endPoint, credentialProvider);
+        OSS ossClient = new OSSClientBuilder().build(endPoint, accessKeyId, secretAccessKey);
+
+        String tempFilePath = "";
+        String osType = System.getProperty("os.name");
+        if (osType.contains("Windows")) {
+            tempFilePath = "tmp" + File.separator + fileName;
+        } else {
+            tempFilePath = "/tmp" + File.separator + fileName;
         }
-        InputStream is = null;
+        File tmpFile = new File(tempFilePath);
+        log.info("临时文件路径: {}", tempFilePath);
+        if (!tmpFile.exists()) {
+            tmpFile.createNewFile();
+        }
 
         try {
-            thirdPartyFilePath = thirdPartyFilePath.replaceAll(" ", "%20");
-            URL url = new URL(thirdPartyFilePath);
-            URLConnection urlConn = url.openConnection();
-            HttpURLConnection httpUrlConn = (HttpURLConnection) urlConn;
-//            httpUrlConn.setRequestProperty();
-            httpUrlConn.setDoOutput(false);
-            httpUrlConn.setDoInput(true);
-            httpUrlConn.setUseCaches(false);
-            httpUrlConn.setRequestMethod("GET");
-            is = httpUrlConn.getInputStream();
-            String docId = fileStore.putFile(thirdPartyFileName, is, null);
-            if (docId == null) {
-                log.error("文件上传开放平台失败！");
-                throw new RuntimeException("文件上传开放平台失败！");
+            log.info("bucketName: {}", bucketName);
+
+            String[] split = filePath.split(endPoint);
+            if (split.length > 1) {
+                filePath = split[1].substring(1);
+            } else {
+                filePath = split[0];
             }
-            is.close();
-            return docId;
+            log.info("objectName: {}", filePath);
+            OSSObject ossObject = ossClient.getObject(bucketName, filePath);
+            InputStream content = ossObject.getObjectContent();
+            if (content != null) {
+                OutputStream os = new FileOutputStream(tmpFile);
+                byte[] bytes = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = content.read(bytes)) != -1) {
+                    os.write(bytes, 0, bytesRead);
+                }
+                String docId = fileStore.putFile(tmpFile.getName(), tmpFile, null);
+
+                if (StringUtils.isBlank(docId)) {
+                    log.error("rc上传失败: {}", fileName);
+                    throw new Exception("rc上传失败");
+                }
+                log.info("rc上传成功！doc_id: {}", docId);
+
+                os.close();
+                content.close();
+                return docId;
+            } else {
+                log.error("第三方文件下载失败, bucketName: {}  objectName: {}", bucketName, filePath);
+                throw new RuntimeException("第三方文件下载失败");
+            }
+        } catch (OSSException oe) {
+            log.error("oss下载失败!");
+            log.error("Error Message: {}", oe.getErrorMessage());
+            log.error("Error Code: {}", oe.getErrorCode());
+            log.error("Request ID: {}", oe.getRequestId());
+            log.error("Host ID: {}", oe.getHostId());
+            throw new Exception(oe);
         } catch (Exception e) {
-            log.error("文件上传开放平台失败");
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error("上传文件失败");
+            throw e;
         } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
+            if (ossClient != null) {
+                ossClient.shutdown();
+            }
+
+            // 删除临时文件
+            if (tmpFile.exists()) {
+                if (tmpFile.delete()) {
+                    log.info("临时文件删除成功");
                 }
             }
         }
-//
-//        try {
-//            URL url = new URL(thirdPartyFilePath);
-//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//            is = conn.getInputStream();
-//            if (is == null) {
-//                log.error("下载第三方文件资源失败！");
-//                throw new RuntimeException("下载第三方文件资源失败！");
-//            }
-//            String docId = fileStore.putFile(thirdPartyFileName, is, null);
-////            log.info("文件上传成功，doc_id: {}", docId);
-////            conn.disconnect();
-//            return docId;
-//        } catch (Exception e) {
-//            log.error("文件上传开放平台失败！");
-//            throw new RuntimeException(e);
-//        } finally {
-//            if (is != null) {
-//                try {
-//                    is.close();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
     }
 
 }

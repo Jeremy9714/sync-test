@@ -163,4 +163,16 @@ public class OpenApiService {
         return tableColumnList;
     }
 
+    //刷新sessionid
+    public void syncSessionId() {
+        String url = openUrl + "/oresource/admin/resource/getTableColumn";
+        HttpHeaders httpHeaders = new HttpHeaders() {{
+            add("Content-Type", "application/json;charset=UTF-8");
+            add("Cookie", "SESSION=" + sessionId);
+        }};
+        HttpEntity httpEntity = new HttpEntity<>(httpHeaders);
+        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
+//        JSONObject result = restTemplate.getForObject(url, JSONObject.class, tableMap);
+    }
+
 }

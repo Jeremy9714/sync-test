@@ -2,6 +2,7 @@ package com.inspur.dsp.open.sync.schedule;
 
 import com.inspur.dsp.open.sync.down.catalog.service.CatalogInfoService;
 import com.inspur.dsp.open.sync.down.catalog.service.CatalogGroupLinkService;
+import com.inspur.dsp.open.sync.down.resource.api.OpenApiService;
 import com.inspur.dsp.open.sync.down.resource.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,9 @@ public class SyncDataTask {
 //    @Autowired
 //    private ResourceDatasourceService resourceDatasourceService;
 
+    @Autowired
+    private OpenApiService openApiService;
+
     @Value("${catalog.schedule.enable:1}")
     private String catalogScheduleFlag;
 
@@ -53,7 +57,7 @@ public class SyncDataTask {
     @Async
     @Scheduled(cron = "${task.schedule.cron:0 0/1 * * * ?}")
     public void syncCatalogData() {
-        if (!"1".equals(catalogScheduleFlag)){
+        if (!"1".equals(catalogScheduleFlag)) {
             return;
         }
         log.info("--------开始同步----目录信息下行表");
@@ -65,7 +69,7 @@ public class SyncDataTask {
     @Async
     @Scheduled(cron = "${task.schedule.cron:0 0/1 * * * ?}")
     public void syncResourceFile() {
-        if (!"1".equals(resourceFileScheduleFlag)){
+        if (!"1".equals(resourceFileScheduleFlag)) {
             return;
         }
         log.info("--------开始同步----文件资源下行表");
@@ -76,7 +80,7 @@ public class SyncDataTask {
     @Async
     @Scheduled(cron = "${task.schedule.cron:0 0/1 * * * ?}")
     public void syncResourceTable() {
-        if (!"1".equals(resourceTableScheduleFlag)){
+        if (!"1".equals(resourceTableScheduleFlag)) {
             return;
         }
 //        log.info("--------开始同步----数据源下行表");
@@ -86,5 +90,12 @@ public class SyncDataTask {
         log.info("--------开始同步----库表资源下行表");
         resourceTableService.syncResourceTable();
         log.info("--------结束同步----库表资源下行表");
+    }
+
+    @Async
+    @Scheduled(cron = "0 0/1 * * * ?")
+    public void syncSessionId() {
+        openApiService.syncSessionId();
+        log.info("--------更新sessionid cookie----");
     }
 }
