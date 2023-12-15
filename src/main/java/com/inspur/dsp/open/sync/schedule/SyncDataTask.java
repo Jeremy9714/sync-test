@@ -40,6 +40,9 @@ public class SyncDataTask {
 //    private ResourceDatasourceService resourceDatasourceService;
 
     @Autowired
+    private OpenResourceFileService openResourceFileService;
+
+    @Autowired
     private OpenApiService openApiService;
 
     @Value("${catalog.schedule.enable:1}")
@@ -73,7 +76,8 @@ public class SyncDataTask {
             return;
         }
         log.info("--------开始同步----文件资源下行表");
-        resourceFileService.syncResourceFile();
+//        resourceFileService.syncResourceFile();
+        openResourceFileService.syncOpenResourceFile();
         log.info("--------结束同步----文件资源下行表");
     }
 

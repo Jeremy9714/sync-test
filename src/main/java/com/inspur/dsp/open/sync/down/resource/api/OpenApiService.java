@@ -1,6 +1,7 @@
 package com.inspur.dsp.open.sync.down.resource.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.inspur.dsp.open.sync.down.resource.dto.OpenResourceFileDto;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -119,6 +118,58 @@ public class OpenApiService {
             throw new RuntimeException("接口调用失败");
         }
     }
+
+    /**
+     * 开放文件资源更新接口
+     *
+     * @param openResourceFileDto
+     */
+    public void updateOpenFileResource(OpenResourceFileDto openResourceFileDto) {
+        String url = openUrl + "/oresource/admin/resource/updateFileResource";
+        log.debug("更新文件资源，url:{}", url);
+        HttpHeaders httpHeaders = new HttpHeaders() {{
+            add("Content-Type", "application/json;charset=UTF-8");
+            add("Cookie", "SESSION=" + sessionId);
+        }};
+        HttpEntity httpEntity = new HttpEntity<>(openResourceFileDto, httpHeaders);
+        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
+        log.debug("更新文件资源，返回参数:{}", result.toString());
+        int code = result.getIntValue("code");
+        if (code == 1) {
+            log.info("更新文件资源成功。");
+        } else {
+            String msg = result.getString("msg");
+            log.error("更新文件资源，接口调用失败。错误说明:{}", msg);
+            throw new RuntimeException("接口调用失败");
+        }
+    }
+
+    /**
+     * 开放文件资源删除
+     *
+     * @param fileId
+     * @param cataId
+     */
+    public void deleteOpenFileResource(String fileId, String cataId) {
+        String url = openUrl + "/oresource/admin/resource/deleteFileResource?file_id=" + fileId + "&cata_id=" + cataId;
+        log.debug("删除文件资源，url:{}", url);
+        HttpHeaders httpHeaders = new HttpHeaders() {{
+            add("Content-Type", "application/json;charset=UTF-8");
+            add("Cookie", "SESSION=" + sessionId);
+        }};
+        HttpEntity httpEntity = new HttpEntity<>(httpHeaders);
+        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class);
+        log.debug("删除文件资源，返回参数:{}", result.toString());
+        int code = result.getIntValue("code");
+        if (code == 1) {
+            log.info("删除文件资源成功。");
+        } else {
+            String msg = result.getString("msg");
+            log.error("删除文件资源，接口调用失败。错误说明:{}", msg);
+            throw new RuntimeException("接口调用失败");
+        }
+    }
+
 
 //    /**
 //     * 下载文件

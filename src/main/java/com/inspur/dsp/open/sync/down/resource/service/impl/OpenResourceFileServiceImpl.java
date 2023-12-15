@@ -10,13 +10,19 @@ import com.aliyun.oss.model.OSSObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.inspur.dsp.open.common.Result;
-import com.inspur.dsp.open.sync.down.resource.bean.ResourceFile;
-import com.inspur.dsp.open.sync.down.resource.dao.ResourceFileDao;
-import com.inspur.dsp.open.sync.down.resource.dto.ResourceFileDto;
-import com.inspur.dsp.open.sync.down.resource.service.ResourceFileService;
-import com.inspur.dsp.open.sync.util.*;
 import com.inspur.dsp.open.common.upload.FileStoreFactory;
 import com.inspur.dsp.open.common.upload.RCBasedFileStore;
+import com.inspur.dsp.open.sync.down.resource.api.OpenApiService;
+import com.inspur.dsp.open.sync.down.resource.bean.OpenResourceFile;
+import com.inspur.dsp.open.sync.down.resource.bean.ResourceFile;
+import com.inspur.dsp.open.sync.down.resource.dao.OpenResourceFileDao;
+import com.inspur.dsp.open.sync.down.resource.dto.OpenResourceFileDto;
+import com.inspur.dsp.open.sync.down.resource.dto.ResourceFileDto;
+import com.inspur.dsp.open.sync.down.resource.service.OpenResourceFileService;
+import com.inspur.dsp.open.sync.util.DSPBeanUtils;
+import com.inspur.dsp.open.sync.util.DubboService;
+import com.inspur.dsp.open.sync.util.ServiceConstant;
+import com.inspur.dsp.open.sync.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +41,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * @Description:
+ * @Author: zhangchy05 on 2023/12/15 10:44
+ * @Version: 1.0
+ */
 @Service
-public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, ResourceFile> implements ResourceFileService {
+public class OpenResourceFileServiceImpl extends ServiceImpl<OpenResourceFileDao, OpenResourceFile> implements OpenResourceFileService {
     private static final Logger log = LoggerFactory.getLogger(ResourceFileServiceImpl.class);
 
     @Autowired
-    private ResourceFileDao resourceFileDao;
+    private OpenResourceFileDao openResourceFileDao;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -51,6 +61,9 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
 
     @Autowired
     private FileStoreFactory fileStoreFactory;
+
+    @Autowired
+    private OpenApiService openApiService;
 
     @Value("${oss.end-point}")
     private String endPoint;
@@ -64,20 +77,20 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
     @Value("${oss.secretAccessKey}")
     private String secretAccessKey;
 
-    @Transactional
     @Override
-    public boolean syncResourceFile() {
+    @Transactional
+    public boolean syncOpenResourceFile() {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String lastSyncDate = redisTemplate.opsForValue().get(ServiceConstant.SYNC_RESOURCE_FILE_KEY);
-            String latestOperationDate = resourceFileDao.getLatestOperationDate();
+            String latestOperationDate = openResourceFileDao.getLatestOperationDate();
             // 无数据
             if (StringUtils.isBlank(latestOperationDate)) {
                 log.info("下行库无新增文件资源下行表数据，不需要同步");
                 return true;
             }
 
-            EntityWrapper<ResourceFile> wrapper = new EntityWrapper<>();
+            EntityWrapper<OpenResourceFile> wrapper = new EntityWrapper<>();
             if (StringUtils.isNotBlank(lastSyncDate)) {
                 Date lastSyncTime = sdf.parse(lastSyncDate);
                 Date latestOperationTime = sdf.parse(latestOperationDate);
@@ -89,24 +102,29 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
 
             }
             wrapper.orderBy("operate_date").last("limit 0,20");
-            List<ResourceFile> resultList = this.selectList(wrapper);
+            List<OpenResourceFile> resultList = this.selectList(wrapper);
             log.debug("查询结果: {}", JSONObject.toJSONString(resultList));
 
-            for (ResourceFile resourceFile : resultList) {
-                String operateType = resourceFile.getOperateType();
+            for (OpenResourceFile openResourceFile : resultList) {
+                String operateType = openResourceFile.getOperateType();
                 switch (operateType) {
                     case "I":
+                        saveOpenResourceFile(transformFileToMap(openResourceFile));
+                        break;
                     case "U":
-                        saveResourceFile(transformFileToMap(resourceFile));
-//                        saveOpenResourceFile(transformFileToMap(resourceFile));
+                        OpenResourceFileDto openResourceFileDto = new OpenResourceFileDto();
+                        DSPBeanUtils.copyProperties(openResourceFile, openResourceFileDto);
+                        String docId = uploadResourceAttachment(openResourceFile.getFilePath(), openResourceFile.getFileName());
+                        openResourceFileDto.setIdInRc(docId);
+                        openApiService.updateOpenFileResource(openResourceFileDto);
                         break;
                     case "D":
-                        deleteResourceFile(resourceFile.getId());
+                        openApiService.deleteOpenFileResource(openResourceFile.getFileId(), openResourceFile.getCataId());
                         break;
                     default:
                         throw new RuntimeException("文件资源，无此操作类型");
                 }
-                String currentOperateDate = sdf.format(resourceFile.getOperateDate());
+                String currentOperateDate = sdf.format(openResourceFile.getOperateDate());
                 redisTemplate.opsForValue().set(ServiceConstant.SYNC_RESOURCE_FILE_KEY, currentOperateDate);
             }
 
@@ -121,42 +139,23 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
     /**
      * 组装，保存文件资源的入参
      *
-     * @param resourceFile
+     * @param openResourceFile
      * @return
      */
-    private Map<String, Object> transformFileToMap(ResourceFile resourceFile) throws Exception {
-        ResourceFileDto resourceFileDto = new ResourceFileDto();
-        DSPBeanUtils.copyProperties(resourceFile, resourceFileDto);
+    private Map<String, Object> transformFileToMap(OpenResourceFile openResourceFile) throws Exception {
+        OpenResourceFileDto openResourceFileDto = new OpenResourceFileDto();
+        DSPBeanUtils.copyProperties(openResourceFile, openResourceFileDto);
 
-        String docId = uploadResourceAttachment(resourceFile.getFilePath(), resourceFile.getFileName());
-        resourceFileDto.setFilePath(docId);
+        String docId = uploadResourceAttachment(openResourceFile.getFilePath(), openResourceFile.getFileName());
+        openResourceFileDto.setIdInRc(docId);
 
-        if (!ValidationUtil.validate(resourceFileDto)) {
-            log.error("保存文件资源，请求参数存在必填项为空，需检查参数:{}", resourceFileDto);
-            throw new RuntimeException("请求参数不合规");
-        }
+//        if (!ValidationUtil.validate(openResourceFileDto)) {
+//            log.error("保存文件资源，请求参数存在必填项为空，需检查参数:{}", openResourceFileDto);
+//            throw new RuntimeException("请求参数不合规");
+//        }
 
-        Map<String, Object> fileMap = DSPBeanUtils.beanToMap(resourceFileDto);
+        Map<String, Object> fileMap = DSPBeanUtils.beanToMap(openResourceFileDto);
         return fileMap;
-    }
-
-    /**
-     * 调用，保存文件资源
-     *
-     * @param fileMap
-     * @return
-     */
-    private void saveResourceFile(Map<String, Object> fileMap) {
-        Map<String, Object> result = dubboService.saveFileResource(fileMap);
-        String code = (String) result.get("code");
-        if (code.equals("200")) {
-            String data = (String) result.get("data");
-            log.info("保存文件资源成功。资源id为{}", data);
-        } else {
-            String error = (String) result.get("error");
-            log.error("保存文件资源，接口调用失败。错误说明:{}", error);
-            throw new RuntimeException("接口调用失败");
-        }
     }
 
     /**
@@ -171,24 +170,6 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
             log.info("保存文件资源成功!");
         } else {
             log.error("保存文件资源，接口调用失败!");
-            throw new RuntimeException("接口调用失败");
-        }
-    }
-
-    /**
-     * 调用，删除文件资源
-     *
-     * @param id
-     */
-    private void deleteResourceFile(String id) {
-        Map<String, Object> result = dubboService.deleteResource(id);
-        String code = (String) result.get("code");
-        if (code.equals("200")) {
-            log.info("删除文件资源成功");
-            // TODO 资源下架后，查询一次目录，如果该目录下没有资源，就把目录也下架
-        } else {
-            String error = (String) result.get("error");
-            log.error("删除文件资源，接口调用失败。错误说明:{}", error);
             throw new RuntimeException("接口调用失败");
         }
     }
@@ -273,7 +254,4 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
             }
         }
     }
-
 }
-
-
