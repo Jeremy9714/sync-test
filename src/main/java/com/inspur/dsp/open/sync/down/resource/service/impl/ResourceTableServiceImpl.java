@@ -29,7 +29,6 @@ import java.util.*;
 public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, ResourceTable> implements ResourceTableService {
     private static final Logger log = LoggerFactory.getLogger(ResourceTableServiceImpl.class);
 
-
     @Autowired
     private ResourceTableDao resourceTableDao;
 
@@ -161,7 +160,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
      */
     private Map<String, Object> transformTableToMapDelete(ResourceTable resourceTable) {
         Map<String, Object> tableMap = new HashMap<>();
-        // TODO 等待数据源信息提供
+
         if (StringUtils.isBlank(resourceTable.getDataSourceIdcheck()) || StringUtils.isNotBlank(resourceTable.getItemId()) || StringUtils.isBlank(resourceTable.getCataid())) {
             log.error("删除库表资源，请求参数存在必填项为空，需检查参数:{}", resourceTable.toString());
             throw new RuntimeException("请求参数不合规");

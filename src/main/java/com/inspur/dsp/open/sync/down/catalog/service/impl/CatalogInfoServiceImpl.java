@@ -79,7 +79,8 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
                 wrapper.gt("operate_date", lastSyncDate);
             }
 
-            wrapper.orderBy("operate_date").last("limit 100");
+            wrapper.orderBy("operate_date");
+//                    .last("limit 100");
             List<CatalogInfo> resultList = this.selectList(wrapper);
             log.debug("查询结果: {}", JSONObject.toJSONString(resultList));
 

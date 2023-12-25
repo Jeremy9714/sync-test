@@ -97,7 +97,7 @@ public class ResourceFileServiceImpl extends ServiceImpl<ResourceFileDao, Resour
                 switch (operateType) {
                     case "I":
                     case "U":
-                        saveResourceFile(transformFileToMap(resourceFile));
+                        saveOpenResourceFile(transformFileToMap(resourceFile));
 //                        saveOpenResourceFile(transformFileToMap(resourceFile));
                         break;
                     case "D":
