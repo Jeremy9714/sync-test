@@ -120,7 +120,7 @@ public class OpenApiService {
     }
 
     /**
-     * 开放文件资源更新接口
+     * 开放文件资源更新接口 rest
      *
      * @param openResourceFileDto
      */
@@ -145,7 +145,7 @@ public class OpenApiService {
     }
 
     /**
-     * 开放文件资源删除
+     * 开放文件资源删除 rest
      *
      * @param fileId
      * @param cataId

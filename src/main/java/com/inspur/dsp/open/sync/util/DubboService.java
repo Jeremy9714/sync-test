@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +82,23 @@ public class DubboService {
         return openResourceFileService.addResourceFile(map);
     }
 
+//    /**
+//     * 开放文件资源更新
+//     * @param map
+//     * @return
+//     */
+//    public Result<Boolean> updateOpenResourceFile(Map<String,Object> map){
+//        return openResourceFileService.updateResourceFile(map);
+//    }
+
+//    /**
+//     * 开放文件资源下架
+//     * @param fileId
+//     * @return
+//     */
+//    public Result<Boolean> deleteOpenResourceFile(String fileId){
+//        return openResourceFileService.updateFileStatusByFileId(fileId,5);
+//    }
 
     /**
      * 删除文件资源接口。

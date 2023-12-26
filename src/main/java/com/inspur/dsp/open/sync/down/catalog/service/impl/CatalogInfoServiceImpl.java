@@ -93,6 +93,9 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
                         break;
                     case "D":
                         deleteCatalog(catalogInfo.getCataId());
+//                        EntityWrapper<CatalogItem> catalogItemWrapper = new EntityWrapper<>();
+//                        catalogItemWrapper.eq("cata_id",catalogInfo.getCataId());
+//                        catalogItemService.delete(catalogItemWrapper);
                         break;
                     default:
                         throw new RuntimeException("目录信息，无此操作类型");

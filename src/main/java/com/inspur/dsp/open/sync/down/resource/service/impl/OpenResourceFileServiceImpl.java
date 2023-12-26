@@ -117,9 +117,11 @@ public class OpenResourceFileServiceImpl extends ServiceImpl<OpenResourceFileDao
                         String docId = uploadResourceAttachment(openResourceFile.getFilePath(), openResourceFile.getFileName());
                         openResourceFileDto.setIdInRc(docId);
                         openApiService.updateOpenFileResource(openResourceFileDto);
+//                        updateOpenResourceFile(transformFileToMap(openResourceFile));
                         break;
                     case "D":
                         openApiService.deleteOpenFileResource(openResourceFile.getFileId(), openResourceFile.getCataId());
+//                        deleteOpenResourceFile(openResourceFile.getFileId());
                         break;
                     default:
                         throw new RuntimeException("文件资源，无此操作类型");
@@ -173,6 +175,38 @@ public class OpenResourceFileServiceImpl extends ServiceImpl<OpenResourceFileDao
             throw new RuntimeException("接口调用失败");
         }
     }
+
+//    /**
+//     * 更新文件资源 dubbo
+//     *
+//     * @param fileMap
+//     */
+//    private void updateOpenResourceFile(Map<String,Object> fileMap){
+//        Result<Boolean> result = dubboService.updateOpenResourceFile(fileMap);
+//        Boolean flag = result.getObject();
+//        if (flag) {
+//            log.info("更新文件资源成功!");
+//        } else {
+//            log.error("更新文件资源，接口调用失败!");
+//            throw new RuntimeException("接口调用失败");
+//        }
+//    }
+
+//    /**
+//     * 删除文件资源 dubbo
+//     *
+//     * @param fileId
+//     */
+//    private void deleteOpenResourceFile(String fileId){
+//        Result<Boolean> result = dubboService.deleteOpenResourceFile(fileId);
+//        Boolean flag = result.getObject();
+//        if (flag) {
+//            log.info("下架文件资源成功!");
+//        } else {
+//            log.error("下架文件资源，接口调用失败!");
+//            throw new RuntimeException("接口调用失败");
+//        }
+//    }
 
     private String uploadResourceAttachment(String filePath, String fileName) throws Exception {
         RCBasedFileStore fileStore = (RCBasedFileStore) fileStoreFactory.getFileStore();
