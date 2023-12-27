@@ -168,7 +168,8 @@ public class OpenResourceFileServiceImpl extends ServiceImpl<OpenResourceFileDao
     private void saveOpenResourceFile(Map<String, Object> fileMap) {
         Result<Boolean> result = dubboService.saveOpenFileResource(fileMap);
         Boolean flag = result.getObject();
-        if (flag) {
+        int code = result.getCode();
+        if (code == 0 && flag) {
             log.info("保存文件资源成功!");
         } else {
             log.error("保存文件资源，接口调用失败!");
@@ -176,37 +177,39 @@ public class OpenResourceFileServiceImpl extends ServiceImpl<OpenResourceFileDao
         }
     }
 
-//    /**
-//     * 更新文件资源 dubbo
-//     *
-//     * @param fileMap
-//     */
-//    private void updateOpenResourceFile(Map<String,Object> fileMap){
-//        Result<Boolean> result = dubboService.updateOpenResourceFile(fileMap);
-//        Boolean flag = result.getObject();
-//        if (flag) {
-//            log.info("更新文件资源成功!");
-//        } else {
-//            log.error("更新文件资源，接口调用失败!");
-//            throw new RuntimeException("接口调用失败");
-//        }
-//    }
+    /**
+     * 更新文件资源 dubbo
+     *
+     * @param fileMap
+     */
+    private void updateOpenResourceFile(Map<String,Object> fileMap){
+        Result<Boolean> result = dubboService.updateOpenResourceFile(fileMap);
+        Boolean flag = result.getObject();
+        int code = result.getCode();
+        if (code == 0 && flag) {
+            log.info("更新文件资源成功!");
+        } else {
+            log.error("更新文件资源，接口调用失败!");
+            throw new RuntimeException("接口调用失败");
+        }
+    }
 
-//    /**
-//     * 删除文件资源 dubbo
-//     *
-//     * @param fileId
-//     */
-//    private void deleteOpenResourceFile(String fileId){
-//        Result<Boolean> result = dubboService.deleteOpenResourceFile(fileId);
-//        Boolean flag = result.getObject();
-//        if (flag) {
-//            log.info("下架文件资源成功!");
-//        } else {
-//            log.error("下架文件资源，接口调用失败!");
-//            throw new RuntimeException("接口调用失败");
-//        }
-//    }
+    /**
+     * 删除文件资源 dubbo
+     *
+     * @param fileId
+     */
+    private void deleteOpenResourceFile(String fileId){
+        Result<Boolean> result = dubboService.deleteOpenResourceFile(fileId);
+        Boolean flag = result.getObject();
+        int code = result.getCode();
+        if (code == 0 && flag) {
+            log.info("下架文件资源成功!");
+        } else {
+            log.error("下架文件资源，接口调用失败!");
+            throw new RuntimeException("接口调用失败");
+        }
+    }
 
     private String uploadResourceAttachment(String filePath, String fileName) throws Exception {
         RCBasedFileStore fileStore = (RCBasedFileStore) fileStoreFactory.getFileStore();

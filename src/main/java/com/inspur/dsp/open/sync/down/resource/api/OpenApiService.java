@@ -91,7 +91,7 @@ public class OpenApiService {
 
 
     /**
-     * 调用，删除库表资源
+     * 调用，删除库表资源 rest
      *
      * @return
      */

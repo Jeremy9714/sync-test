@@ -209,11 +209,11 @@ public class CatalogInfoServiceImpl extends ServiceImpl<CatalogInfoDao, com.insp
      * @param cataId
      */
     private void deleteCatalog(String cataId) {
+        Result<Boolean> catalogItemsResult = dubboService.deleteCatalogItemsByCataId(cataId);
+        log.debug("删除信息项，返回结果:{}", catalogItemsResult.toString());
         Result<Boolean> catalogInfoResult = dubboService.deleteCatalogInfo(cataId);
         log.debug("删除目录，返回结果:{}", catalogInfoResult.toString());
-        Result<Boolean> catalogItemsResult = dubboService.deleteCatalogItemsByCataId(cataId);
-        log.debug("删除信息项，返回结果:{}", catalogInfoResult.toString());
-        if (catalogInfoResult.getObject() && catalogItemsResult.getObject()) {
+        if (catalogInfoResult.getCode() == 0 && catalogItemsResult.getCode() == 0 && catalogInfoResult.getObject() && catalogItemsResult.getObject()) {
             log.info("删除目录和信息项成功，{}", cataId);
         } else {
             log.error("删除目录和信息项失败");

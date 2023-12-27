@@ -3,6 +3,7 @@ package com.inspur.dsp.open.sync.down.resource.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.inspur.dsp.open.common.Result;
 import com.inspur.dsp.open.sync.down.catalog.bean.CatalogItem;
 import com.inspur.dsp.open.sync.down.catalog.dao.CatalogItemDao;
 import com.inspur.dsp.open.sync.down.resource.bean.ResourceTable;
@@ -11,6 +12,7 @@ import com.inspur.dsp.open.sync.down.resource.dto.ResourceTableDto;
 import com.inspur.dsp.open.sync.down.resource.service.ResourceTableService;
 import com.inspur.dsp.open.sync.down.resource.api.OpenApiService;
 import com.inspur.dsp.open.sync.util.DSPBeanUtils;
+import com.inspur.dsp.open.sync.util.DubboService;
 import com.inspur.dsp.open.sync.util.ServiceConstant;
 import com.inspur.dsp.open.sync.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
@@ -40,6 +42,9 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
 
     @Autowired
     private CatalogItemDao catalogItemDao;
+
+    @Autowired
+    private DubboService dubboService;
 
     @Transactional
     @Override
@@ -78,6 +83,7 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
                         break;
                     case "D":
                         openApiService.deleteResourceTable(transformTableToMapDelete(resourceTable));
+//                        deleteOpenResourceTable(resourceTable.getItemId());
                         break;
                     default:
                         throw new RuntimeException("库表资源，无此操作类型");
@@ -150,6 +156,23 @@ public class ResourceTableServiceImpl extends ServiceImpl<ResourceTableDao, Reso
         Map<String, Object> tableMap = DSPBeanUtils.beanToMap(resourceTableDto);
 
         return tableMap;
+    }
+
+    /**
+     * 下线库表资源 dubbo
+     *
+     * @param tableId
+     */
+    private void deleteOpenResourceTable(String tableId){
+        Result<Boolean> result = dubboService.deleteOpenTableResource(tableId);
+        Boolean flag = result.getObject();
+        int code = result.getCode();
+        if (code == 0 && flag) {
+            log.info("下线库表资源成功!");
+        } else {
+            log.error("下线库表资源资源，接口调用失败!");
+            throw new RuntimeException("接口调用失败");
+        }
     }
 
     /**
